@@ -9,7 +9,8 @@ export default function Page() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('success') === '1') setStatusMsg('결제가 완료됐어요 ✅');
-    if (params.get('canceled') === '1') setStatusMsg('결제가 취소됐어요 ❌');
+    else if (params.get('canceled') === '1') setStatusMsg('결제가 취소됐어요 ❌');
+    else setStatusMsg(null);
   }, []);
 
   const pay = async () => {
