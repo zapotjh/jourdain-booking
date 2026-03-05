@@ -1,25 +1,42 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+'use client';
 
-export default function Home() {
-  const [email, setEmail] = useState("");
+import { useState } from 'react';
+
+export default function Page() {
+  const [email, setEmail] = useState('');
 
   const pay = async () => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      if (!email.includes('@')) {
+        alert('이메일을 제대로 입력해줘');
+        return;
+      }
 
-    const data = await res.json();
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
-    if (!res.ok) {
-      alert(data.error || "Error");
-      return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error('API error:', data);
+        alert(data?.error ?? '결제 요청 실패');
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Stripe URL이 비어있어');
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e?.message ?? '알 수 없는 에러');
     }
-
-    window.location.href = data.url;
   };
 
   return (
@@ -39,7 +56,7 @@ export default function Home() {
 
       <button
         onClick={pay}
-        style={{ marginTop: 16, padding: "10px 16px" }}
+        style={{ marginTop: 16, padding: '10px 16px', cursor: 'pointer' }}
       >
         Pay (test)
       </button>
