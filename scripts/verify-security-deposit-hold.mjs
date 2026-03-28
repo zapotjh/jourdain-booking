@@ -8,12 +8,19 @@
  *
  * 실행:
  *   node scripts/verify-security-deposit-hold.mjs
+ *   node scripts/verify-security-deposit-hold.mjs --hold-smoke
+ *   node scripts/verify-security-deposit-hold.mjs --hold-smoke --booking-id=<uuid> --allow-non-test
+ *   node scripts/verify-security-deposit-hold.mjs --hold-then-release [--booking-id=... --allow-non-test]
  *   node scripts/verify-security-deposit-hold.mjs --full
  *   node scripts/verify-security-deposit-hold.mjs --full --booking-id=<uuid>
  *
+ * --hold-smoke: 홀드만 검증 (캡처/릴리스 없음, STRIPE_SECRET_KEY 불필요).
+ * --hold-then-release: 홀드 성공 후 POST /api/host/security-deposit/release 로 승인 취소(즉시).
+ *   카드망 “며칠 뒤 자동 소멸”은 이 스크립트로 재현 불가(시간 필요). STRIPE_SECRET_KEY 있으면 PI=canceled 까지 확인.
+ *
  * --full: [TEST]… 이름의 confirmed+paid 예약을 찾거나 --booking-id 지정,
- *         내일 체크인으로 맞춘 뒤 홀드 cron 호출 → DB·Stripe 확인 →
- *         100센트 캡처 → 잔여 릴리스 (한 예약으로 캡처+릴리스 둘 다 검증)
+ *         파리 오늘+3일 체크인으로 맞춘 뒤 홀드 cron → DB·Stripe 확인 →
+ *         100센트 캡처 → 잔여 릴리스
  */
 
 import { readFileSync, existsSync } from "fs";
@@ -57,6 +64,9 @@ function arg(name) {
 }
 
 const FULL = process.argv.includes("--full");
+const HOLD_SMOKE = process.argv.includes("--hold-smoke");
+const HOLD_THEN_RELEASE = process.argv.includes("--hold-then-release");
+const ALLOW_NON_TEST = process.argv.includes("--allow-non-test");
 const BOOKING_ID_ARG = arg("--booking-id");
 
 function log(title, ok, detail = "") {
@@ -171,30 +181,26 @@ async function stepHttp() {
   };
 }
 
-/** Paris calendar: today + n days (hold cron uses +3 for check_in). */
+/** Paris calendar today + n days (same rule as lib/paris-time + SQL Paris date + n). */
 function parisPlusDaysFromToday(plusDays) {
-  const s = new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" });
-  const d = new Date(s);
-  d.setDate(d.getDate() + plusDays);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  const safe = Math.max(0, Math.floor(Number(plusDays)));
+  const parisToday = new Date().toLocaleDateString("sv-SE", {
+    timeZone: "Europe/Paris",
+  });
+  const [y, mo, da] = parisToday.split("-").map(Number);
+  const utc = Date.UTC(y, mo - 1, da + safe);
+  return new Date(utc).toISOString().slice(0, 10);
 }
 
-async function fullFlow() {
-  const { createClient } = await import("@supabase/supabase-js");
-  const Stripe = (await import("stripe")).default;
+function addDaysYmd(ymd, days) {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !CRON_SECRET || !STRIPE_SECRET) {
-    console.error("✗ --full 는 SUPABASE_URL, SERVICE_ROLE, CRON_SECRET, STRIPE_SECRET_KEY 필요");
-    process.exit(1);
-  }
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-  const stripe = new Stripe(STRIPE_SECRET, { apiVersion: "2026-02-25.clover" });
-  const base = BASE_URL.replace(/\/+$/, "");
-
+/** @param {{ requireTestName: boolean }} opts */
+async function resolveBookingRow(supabase, opts) {
   let bookingId = BOOKING_ID_ARG;
   let row;
 
@@ -211,8 +217,11 @@ async function fullFlow() {
       process.exit(1);
     }
     row = data;
-    if (!String(row.guest_name || "").includes("[TEST]")) {
-      console.error("✗ 안전: guest_name 에 [TEST] 가 없으면 --full 실행 거부");
+    const hasTest = String(row.guest_name || "").includes("[TEST]");
+    if (opts.requireTestName && !hasTest && !ALLOW_NON_TEST) {
+      console.error(
+        "✗ guest_name 에 [TEST] 없음 — 실제 예약이면 --allow-non-test 와 함께 --booking-id 로만 실행하세요",
+      );
       process.exit(1);
     }
   } else {
@@ -229,7 +238,7 @@ async function fullFlow() {
       .maybeSingle();
     if (!data?.id) {
       console.error(
-        "✗ [TEST] confirmed+paid+deposit PI 예약 없음. prepare:critical-fixtures 등으로 만든 뒤 재시도 또는 --booking-id=",
+        "✗ [TEST]로 시작하는 guest_name 의 confirmed+paid+deposit PI 예약 없음. --booking-id=<uuid> 지정 또는 예약 생성 후 재시도",
       );
       process.exit(1);
     }
@@ -237,16 +246,14 @@ async function fullFlow() {
     bookingId = data.id;
   }
 
+  return { bookingId, row };
+}
+
+async function prepareBookingForHoldCron(supabase, bookingId, row) {
   const checkIn = parisPlusDaysFromToday(3);
-  function addDaysYmd(ymd, days) {
-    const [y, m, d] = ymd.split("-").map(Number);
-    const dt = new Date(Date.UTC(y, m - 1, d));
-    dt.setUTCDate(dt.getUTCDate() + days);
-    return dt.toISOString().slice(0, 10);
-  }
   const checkOutStr = addDaysYmd(checkIn, 2);
 
-  console.log("\n--- 준비: 테스트 예약을 체크인 = 파리 기준 오늘+3일 로 설정 ---");
+  console.log("\n--- 준비: 체크인 = 파리 오늘+3일, 홀드 필드 초기화 ---");
   const { error: upErr } = await supabase
     .from("bookings")
     .update({
@@ -272,7 +279,11 @@ async function fullFlow() {
     process.exit(1);
   }
   console.log(`✓ booking ${bookingId} check_in=${checkIn} (Paris today+3d)`);
+  return checkIn;
+}
 
+async function callHoldCronAndFetchRow(supabase, bookingId) {
+  const base = BASE_URL.replace(/\/+$/, "");
   console.log("\n--- 홀드 cron 호출 ---");
   const holdRes = await fetch(`${base}/api/cron/security-deposit-hold`, {
     headers: { "x-cron-secret": CRON_SECRET },
@@ -285,6 +296,154 @@ async function fullFlow() {
     .select(HOLD_COLS)
     .eq("id", bookingId)
     .single();
+
+  return { afterHold, holdJson, holdStatus: holdRes.status };
+}
+
+/** 홀드 크론까지 성공 시 bookingId, hold PI id, supabase 클라이언트 */
+async function runHoldSmokeCore() {
+  const { createClient } = await import("@supabase/supabase-js");
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !CRON_SECRET) {
+    console.error(
+      "✗ NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET 필요",
+    );
+    process.exit(1);
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  const { bookingId, row } = await resolveBookingRow(supabase, {
+    requireTestName: true,
+  });
+
+  await prepareBookingForHoldCron(supabase, bookingId, row);
+  const { afterHold, holdJson, holdStatus } = await callHoldCronAndFetchRow(
+    supabase,
+    bookingId,
+  );
+
+  if (holdStatus !== 200 || !holdJson?.ok) {
+    console.error("✗ cron 응답이 200+ok:true 가 아님");
+    process.exit(1);
+  }
+
+  if (!afterHold?.stripe_security_deposit_payment_intent_id) {
+    console.error(
+      "✗ 홀드 PI 없음 — failure_reason:",
+      afterHold?.security_deposit_hold_failure_reason,
+    );
+    process.exit(1);
+  }
+
+  if (afterHold.security_deposit_hold_status !== "held") {
+    console.error(
+      "✗ security_deposit_hold_status 가 held 가 아님:",
+      afterHold.security_deposit_hold_status,
+    );
+    process.exit(1);
+  }
+
+  return {
+    bookingId,
+    piId: afterHold.stripe_security_deposit_payment_intent_id,
+    supabase,
+  };
+}
+
+/** 홀드 생성만 검증 (Stripe 키 불필요) */
+async function holdSmokeFlow() {
+  const { piId } = await runHoldSmokeCore();
+  console.log("\n✓ HOLD SMOKE OK — PI:", piId);
+}
+
+/**
+ * 홀드 → 호스트 release API(승인 취소). 실제 “며칠 후 자동 만료”는 미검증.
+ * STRIPE_SECRET_KEY 있으면 PI status=canceled 확인.
+ */
+async function holdThenReleaseFlow() {
+  const { bookingId, piId, supabase } = await runHoldSmokeCore();
+  const base = BASE_URL.replace(/\/+$/, "");
+
+  console.log("\n✓ 홀드 성공 — PI:", piId);
+  console.log(
+    "(참고) capture_method=manual + requires_capture 는 **캡처 전**이라 최종 청구 아님. 체크카드는 잔액에서 **가승인/보류**로 보일 수 있음.",
+  );
+
+  console.log("\n--- POST /api/host/security-deposit/release (즉시 승인 취소) ---");
+  const relRes = await fetch(`${base}/api/host/security-deposit/release`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-cron-secret": CRON_SECRET,
+    },
+    body: JSON.stringify({ booking_id: bookingId }),
+  });
+  const relText = await relRes.text();
+  console.log(relRes.status, relText);
+
+  if (!relRes.ok) {
+    console.error("✗ release HTTP 실패");
+    process.exit(1);
+  }
+
+  const { data: finalRow } = await supabase
+    .from("bookings")
+    .select("security_deposit_hold_status,security_deposit_hold_released_at")
+    .eq("id", bookingId)
+    .single();
+
+  if (finalRow?.security_deposit_hold_status !== "released") {
+    console.error("✗ DB security_deposit_hold_status 가 released 아님:", finalRow);
+    process.exit(1);
+  }
+
+  if (!STRIPE_SECRET) {
+    console.log(
+      "\n⚠ STRIPE_SECRET_KEY 없음 — Stripe PI canceled 는 스킵. 넣으면 PI 상태까지 검증합니다.",
+    );
+    console.log("\n✓ HOLD → RELEASE OK (DB만 확인)");
+    return;
+  }
+
+  const Stripe = (await import("stripe")).default;
+  const stripe = new Stripe(STRIPE_SECRET, { apiVersion: "2026-02-25.clover" });
+  const pi = await stripe.paymentIntents.retrieve(piId);
+  console.log("\n--- Stripe PI after release ---");
+  console.log("status:", pi.status);
+
+  if (pi.status !== "canceled") {
+    console.error("✗ 기대: PI canceled, 실제:", pi.status);
+    process.exit(1);
+  }
+
+  console.log(
+    "\n✓ HOLD → RELEASE OK — DB released, Stripe PI canceled",
+  );
+  console.log(
+    "(참고) **시간 경과 자동 소멸**은 카드사/네트워크 규칙(종종 수일) — 자동화하려면 Stripe Test Clock 등 별도 설정이 필요합니다.",
+  );
+}
+
+async function fullFlow() {
+  const { createClient } = await import("@supabase/supabase-js");
+  const Stripe = (await import("stripe")).default;
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY || !CRON_SECRET || !STRIPE_SECRET) {
+    console.error("✗ --full 는 SUPABASE_URL, SERVICE_ROLE, CRON_SECRET, STRIPE_SECRET_KEY 필요");
+    process.exit(1);
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  const stripe = new Stripe(STRIPE_SECRET, { apiVersion: "2026-02-25.clover" });
+  const base = BASE_URL.replace(/\/+$/, "");
+
+  const { bookingId, row } = await resolveBookingRow(supabase, {
+    requireTestName: true,
+  });
+
+  await prepareBookingForHoldCron(supabase, bookingId, row);
+
+  const { afterHold } = await callHoldCronAndFetchRow(supabase, bookingId);
 
   if (!afterHold?.stripe_security_deposit_payment_intent_id) {
     console.error("✗ 홀드 실패 — failure_reason:", afterHold?.security_deposit_hold_failure_reason);
@@ -358,6 +517,15 @@ async function fullFlow() {
 
 async function main() {
   console.log("BASE_URL:", BASE_URL);
+
+  const modeCount = [FULL, HOLD_SMOKE, HOLD_THEN_RELEASE].filter(Boolean).length;
+  if (modeCount > 1) {
+    console.error(
+      "✗ --full / --hold-smoke / --hold-then-release 중 하나만 쓰세요",
+    );
+    process.exit(1);
+  }
+
   const m = await stepMigration();
   const v = stepVercelJson();
   const http = await stepHttp();
@@ -367,6 +535,25 @@ async function main() {
     process.exit(1);
   }
   if (!v) process.exit(1);
+
+  if (HOLD_SMOKE || HOLD_THEN_RELEASE) {
+    if (http.warn404) {
+      console.error(
+        "\n✗ BASE_URL 404 — .env.local 의 NEXT_PUBLIC_SITE_URL(또는 BASE_URL)을 프로덕션 도메인으로 설정하세요.",
+      );
+      process.exit(1);
+    }
+    if (!CRON_SECRET) {
+      console.error("\n✗ CRON_SECRET 없음");
+      process.exit(1);
+    }
+    if (HOLD_THEN_RELEASE) {
+      await holdThenReleaseFlow();
+    } else {
+      await holdSmokeFlow();
+    }
+    return;
+  }
 
   if (FULL) {
     if (http.warn404) {
@@ -391,7 +578,7 @@ async function main() {
     process.exit(1);
   }
   console.log(
-    "\n✓ 기본 자동 검증 완료. 전체 플로우(테스트 예약): node scripts/verify-security-deposit-hold.mjs --full",
+    "\n✓ 기본 자동 검증 완료. 홀드: --hold-smoke | 홀드+릴리스: --hold-then-release | 전체(1€캡처+릴리스): --full",
   );
 }
 

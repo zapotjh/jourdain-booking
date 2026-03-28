@@ -17,6 +17,8 @@
     "verify:email-failure-inject": "node scripts/verify-email-failure-inject.mjs",
     "verify:checkin-email": "node scripts/verify-checkin-email.mjs",
     "verify:security-deposit-hold": "node scripts/verify-security-deposit-hold.mjs",
+    "verify:hold-smoke": "node scripts/verify-security-deposit-hold.mjs --hold-smoke",
+    "verify:hold-then-release": "node scripts/verify-security-deposit-hold.mjs --hold-then-release",
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
