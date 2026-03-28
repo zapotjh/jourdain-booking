@@ -25,15 +25,19 @@ export function startOfTodayParis(): string {
   return getParisDateString();
 }
 
+/**
+ * Gregorian calendar add on a Paris YYYY-MM-DD (matches Postgres
+ * `(ts AT TIME ZONE 'Europe/Paris')::date + n` for the same "Paris today").
+ */
+function addCalendarDaysToParisYmd(parisYmd: string, days: number): string {
+  const [y, mo, da] = parisYmd.split("-").map(Number);
+  const utc = Date.UTC(y, mo - 1, da + days);
+  return new Date(utc).toISOString().slice(0, 10);
+}
+
 /** Paris date string for tomorrow. */
 export function startOfTomorrowParis(): string {
-  const now = new Date();
-  const parisNow = new Date(now.toLocaleString("en-US", { timeZone: PARIS_TZ }));
-  parisNow.setDate(parisNow.getDate() + 1);
-  const y = parisNow.getFullYear();
-  const m = String(parisNow.getMonth() + 1).padStart(2, "0");
-  const d = String(parisNow.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return addCalendarDaysToParisYmd(getParisDateString(), 1);
 }
 
 /** True if the given date string (YYYY-MM-DD) is tomorrow in Paris. */
@@ -47,13 +51,5 @@ export function isTomorrowParis(dateStr: string): boolean {
  */
 export function startOfParisPlusDaysFromToday(plusDays: number): string {
   const safe = Math.max(0, Math.floor(Number(plusDays)));
-  const now = new Date();
-  const parisNow = new Date(
-    now.toLocaleString("en-US", { timeZone: PARIS_TZ }),
-  );
-  parisNow.setDate(parisNow.getDate() + safe);
-  const y = parisNow.getFullYear();
-  const m = String(parisNow.getMonth() + 1).padStart(2, "0");
-  const d = String(parisNow.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return addCalendarDaysToParisYmd(getParisDateString(), safe);
 }

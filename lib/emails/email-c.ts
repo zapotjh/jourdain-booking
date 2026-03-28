@@ -1,0 +1,350 @@
+// Email C — Booking confirmed / deposit paid (customer)
+// Trigger: after Stripe deposit payment webhook (checkout.session.completed)
+
+import { sendEmail } from "./mailer";
+
+export interface EmailCParams {
+  to: string;
+  guestName: string;
+  bookingId: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  longStay: boolean;
+  totalPriceEur: string;
+  depositAmountEur: string;
+  balanceAmountEur: string;
+  stripeSessionId?: string | null;
+}
+
+function escapeHtml(str: string) {
+  return str
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+export async function sendEmailC(p: EmailCParams) {
+  const guestName = escapeHtml(p.guestName);
+
+  const subject =
+    "파리 숙소 예약이 확정되었습니다 | Your Paris Stay is Confirmed";
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:640px;margin:0 auto;color:#1a1a1a;line-height:1.7;">
+
+  <h2 style="color:#2c3e50;">파리 숙소 예약이 확정되었습니다 | Your Paris Stay is Confirmed</h2>
+
+  <p>안녕하세요, <strong>${guestName}</strong>님 :)</p>
+
+  <p>
+    저희 아파트를 예약해 주셔서 감사합니다.<br/>
+    예약이 정상적으로 확정되었습니다.<br/>
+    파리에서의 즐거운 시간을 보내시길 바랍니다.
+  </p>
+
+  <p>
+    아래는 숙박에 필요한 기본 정보입니다.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📍 주소
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    314 rue des Pyrenees<br/>
+    75020 Paris
+  </p>
+
+  <ul style="font-size:14px;color:#555;padding-left:20px;margin:8px 0 16px 0;">
+    <li>프랑스식 기준 4층 (엘리베이터 없음 / 계단)</li>
+    <li>건물 내 전용 주차장은 없습니다</li>
+  </ul>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Address</strong><br/>
+    314 rue des Pyrenees<br/>
+    75020 Paris
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    First building door code: B5791
+  </p>
+
+  <ul style="font-size:14px;color:#555;padding-left:20px;margin:8px 0 16px 0;">
+    <li>4th floor (French building style – stairs)</li>
+    <li>Door on the right with a blue check doormat</li>
+    <li>No private parking inside the building</li>
+  </ul>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🚇 교통
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>지하철</strong><br/>
+    11호선 Jourdain 역 도보 3분
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    CDG 공항에서 오시는 경우 택시 앱 이용을 추천드립니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>추천 앱</strong><br/>
+    • Uber<br/>
+    • Bolt<br/>
+    • G7 (파리 공식 택시)
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    공항에서 미리 예약하지 않았거나 택시 정류장이 아닌 곳에서 접근하는 운전자는 피하시는 것을 추천드립니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Transportation</strong><br/>
+    Metro<br/>
+    Line 11 – Jourdain station (3 min walk)
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    From CDG Airport we recommend using taxi apps:
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    • Uber<br/>
+    • Bolt<br/>
+    • G7 (official Paris taxi – recommended)
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    We recommend avoiding drivers approaching passengers directly in the airport unless you booked in advance.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🕒 체크인
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    체크인은 오후 3시 이후 가능합니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    체크인 전날 셀프 체크인 안내를 보내드립니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Check-in</strong><br/>
+    Self check-in is available after 3:00 PM.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    A detailed self check-in guide will be sent the day before arrival.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📶 와이파이
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    네트워크: Livebox-E500<br/>
+    비밀번호: GmXrNpdmSGtL3HRFqR
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Wi-Fi</strong><br/>
+    Network: Livebox-E500<br/>
+    Password: GmXrNpdmSGtL3HRFqR
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🍽 주방 안내
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    접시는 소파 옆 빌트인 수납장 안에 있습니다.<br/>
+    왼쪽에서 오른쪽으로 여는 방식입니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Kitchen note</strong><br/>
+    Plates are stored inside the built-in cabinet next to the sofa.<br/>
+    The cabinet opens from left to right.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🏡 아파트 이용 안내
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    아파트에 있는 가구, 프린트, 세라믹 오브제들은<br/>
+    제가 오랜 시간 모아온 컬렉션입니다.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    파손이나 손상이 없도록 조심히 사용 부탁드립니다 🙏🏼
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Apartment care</strong><br/>
+    The furniture, prints and ceramic objects in the apartment<br/>
+    are pieces I collected over many years.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    Please help us keep them in good condition.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🍷 근처 레스토랑 &amp; 바 추천
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Soces</strong><br/>
+    프렌치 네오 비스트로<br/>
+    32 Rue de la Villette, 75019<br/>
+    *예약 추천
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Cheval d'or</strong><br/>
+    프렌치 네오 비스트로 스타일의 아시안 요리<br/>
+    21 Rue de la Villette, 75019<br/>
+    *예약 추천
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Mensae</strong><br/>
+    프렌치 파인 다이닝<br/>
+    23 Rue Melingue, 75019<br/>
+    *예약 추천
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Barrio Meschica</strong><br/>
+    정통 멕시칸 타코<br/>
+    Fruit Rouge 마가리타 추천<br/>
+    15 Rue de la Villette, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Le Baratin</strong><br/>
+    프랑스 미식계에서 매우 존경받는 셰프 Raquel Carena의 레스토랑<br/>
+    1987년부터 이어져온 클래식 프렌치 비스트로<br/>
+    3 Rue Jouye-Rouve, 75020
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Le Grand Bol – Belleville</strong><br/>
+    중식당<br/>
+    7 Rue de la Présentation, 75011
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Aux Mandarins de Belleville</strong><br/>
+    가성비 좋은 중식당<br/>
+    테라스 있음 / 예약 없이 방문 가능<br/>
+    12 Rue Jules Romains, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Supra</strong><br/>
+    조지아 내추럴 와인 바<br/>
+    12 Rue Jouye-Rouve, 75020
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>La Cale</strong><br/>
+    내추럴 와인 바<br/>
+    113 Rue de Belleville, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Dix Vins de la Joie</strong><br/>
+    내추럴 와인 바<br/>
+    80 Rue des Rigoles, 75020
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+☕ 카페
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Mardi</strong><br/>
+    29 Rue de la Villette, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Bokbar</strong><br/>
+    스칸디나비안 스타일 카페<br/>
+    72 Rue Julien Lacroix, 75020
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <p style="font-size:14px;color:#555;">
+    궁금한 점이 있으시면 언제든 편하게 문의 주세요 :)
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    즐거운 파리 여행 되시길 바랍니다!
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    If you have any questions, feel free to contact us anytime.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    We hope you have a wonderful stay in Paris :)
+  </p>
+
+  <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
+
+  <p style="font-size:12px;color:#aaa;">
+    L'appartement Jourdain — 예약 확정 메일
+  </p>
+
+</div>
+`;
+
+  return sendEmail({
+    to: p.to,
+    subject,
+    html,
+    recipientType: "guest",
+  });
+}
