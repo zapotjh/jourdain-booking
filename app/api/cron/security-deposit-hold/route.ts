@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
@@ -241,7 +242,28 @@ export async function GET(req: Request) {
         continue;
       }
 
-      const idempotencyKey = `security_deposit_hold:${bookingId}`;
+      // Stripe replays the first response for the same idempotency key (often 24h+).
+      // If the key is booking-only or repeats (e.g. missing claim timestamp), the API can
+      // rethrow the same CardError with no new issuer attempt — Dashboard shows nothing new.
+      let attemptStamp = String(
+        claimed.last_security_deposit_hold_attempt_at ?? "",
+      ).replace(/[^a-zA-Z0-9_-]/g, "-");
+      if (!attemptStamp) {
+        attemptStamp = `u-${randomUUID()}`;
+        console.warn(
+          "[security-deposit-hold] claim row missing last_security_deposit_hold_attempt_at; random idempotency suffix",
+          { bookingId },
+        );
+      }
+      const idempotencyKey =
+        `security_deposit_hold:${bookingId}:${parisToday}:${attemptStamp}`.slice(
+          0,
+          255,
+        );
+      console.log("[security-deposit-hold] stripe PI idempotencyKey", {
+        bookingId,
+        idempotencyKey,
+      });
       let pi = await stripe.paymentIntents.create(
         {
           amount: holdCents,

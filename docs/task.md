@@ -116,7 +116,7 @@
 
 - [x] `supabase/migrations/11_security_deposit_hold.sql` — hold 컬럼 + `claim_security_deposit_hold_attempt(booking_id)` (+ `13_security_deposit_hold_three_days_before.sql` — claim RPC: Paris 기준 `check_in` = 오늘+3일)
 - [x] `GET /api/cron/security-deposit-hold` — 파리 기준 `check_in === 오늘+3일` 인 confirmed+paid 예약만 (체크인 3일 전 홀드 시도), 별도 PI (`capture_method: manual`, metadata `kind=security_deposit_hold`). 보증금 금액: 숙박 ≤14박 €500, >14박 €1,200 (`security_deposit_hold_cents`)
-- [x] Stripe idempotency: `security_deposit_hold:{booking_id}`
+- [x] Stripe idempotency: `security_deposit_hold:{booking_id}:{paris_today}:{claim_timestamp}` (per successful claim)
 - [x] `POST /api/host/security-deposit/release` — authorization 해제 (cancel)
 - [x] `POST /api/host/security-deposit/capture` — partial/full capture (`amount_cents` 선택)
 - [x] `vercel.json` cron: `/api/cron/security-deposit-hold` (UTC 스케줄; 로직은 전부 Europe/Paris)
