@@ -1,3 +1,9 @@
+/**
+ * NON-CANONICAL: Standalone Stripe Checkout session creation.
+ * NOT part of the production booking flow (request-booking → host/approve → webhook).
+ * Use for manual/test payments only. Canonical deposit flow uses lib/approve-booking.ts and
+ * stores stripe_session_id on the booking; this route does not create or update bookings.
+ */
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
@@ -30,7 +36,7 @@ export async function POST(req: Request) {
 
     // ✅ 사이트 URL 없을 때 기본값 (프로덕션 도메인 넣어두면 편함)
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://jourdain-booking.vercel.app";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://lappartementjourdain.com";
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],

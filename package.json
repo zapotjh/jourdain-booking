@@ -6,10 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "playwright test",
+    "prepare:critical-fixtures": "node scripts/prepare-critical-fixtures.mjs",
+    "prepare:stripe-fixtures": "node scripts/prepare-stripe-payment-fixtures.mjs",
+    "verify:critical": "node scripts/verify-critical-six.mjs",
+    "verify:all-flows": "node scripts/verify-all-flows.mjs",
+    "trigger:balance-failure": "node scripts/trigger-balance-failure.mjs",
+    "verify:balance-failure-retry": "node scripts/verify-balance-failure-retry.mjs",
+    "verify:email-failure-inject": "node scripts/verify-email-failure-inject.mjs",
+    "verify:checkin-email": "node scripts/verify-checkin-email.mjs",
+    "verify:security-deposit-hold": "node scripts/verify-security-deposit-hold.mjs",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
+    "libphonenumber-js": "^1.12.40",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -17,6 +29,7 @@
     "stripe": "^20.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
