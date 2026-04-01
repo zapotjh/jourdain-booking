@@ -36,7 +36,7 @@ export default function QAPage() {
         style={{
           position: 'fixed',
           top: 46,
-          right: 10,
+          right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
           zIndex: 21,
           padding: '8.5px 11.9px',
           borderRadius: 999,
@@ -96,13 +96,26 @@ export default function QAPage() {
               <p style={{ ...fluidQaBody, margin: '8px 0 0 0' }}>보증금(Deposit)</p>
               <ul style={{ ...listStyle, margin: '4px 0' }}>
                 <li>
-                  파손/분실 방지를 위해 카드 승인(홀드) 방식으로만 처리됩니다. (28€ x 숙박일 수)
+                  환불 보증금은 <strong>숨겨진 추가 비용이 아니라</strong> 파손/분실 등에 대비한{' '}
+                  <strong>100% 환불 가능한 예치금</strong>입니다.
                 </li>
                 <li>
-                  실제 청구가 아닌 승인 보류 방식이며, 파손·분실·과도한 오염이 없는 경우 체크아웃 후
-                  자동 해제됩니다.
+                  금액: <strong>14박 이하 €500</strong> / <strong>14박 초과 €1,200</strong>
+                </li>
+                <li>
+                  결제 시점: <strong>체크인 전 잔금(60%) 자동 결제 시</strong> 잔금과 함께{' '}
+                  <strong>보증금이 함께 청구</strong>됩니다.
+                </li>
+                <li>
+                  환불: 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 <strong>전액 환불</strong>
+                  됩니다.
                 </li>
               </ul>
+              <div style={{ height: 6 }} />
+              <p style={{ ...fluidQaBody, fontSize: 'clamp(12px, 3vw, 13px)', opacity: 0.9 }}>
+                EN: A fully refundable security deposit will be charged together with the remaining balance before check-in. It will be
+                fully refunded after checkout if no damage is found. (≤14 nights €500 / &gt;14 nights €1,200)
+              </p>
             </article>
 
             <article style={{ marginBottom: 'clamp(18px, 4vw, 24px)' }}>

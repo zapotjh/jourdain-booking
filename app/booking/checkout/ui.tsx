@@ -247,7 +247,7 @@ export function CheckoutClient() {
                 onChange={setAgreeTerms}
                 label="이용약관을 읽었으며 약관에 동의합니다."
               />
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                 <button
                   type="button"
                   onClick={() => router.push('/terms')}
@@ -260,6 +260,7 @@ export function CheckoutClient() {
                     color: '#0D0822',
                     textDecoration: 'underline',
                     cursor: 'pointer',
+                    alignSelf: 'flex-end',
                   }}
                 >
                   약관보기

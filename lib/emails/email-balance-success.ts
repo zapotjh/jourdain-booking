@@ -12,6 +12,7 @@ export interface EmailBalanceSuccessParams {
   totalPriceEur: string;
   depositAmountEur: string;
   balanceAmountEur: string;
+  securityDepositAmountEur?: string;
 }
 
 function escapeHtml(str: string) {
@@ -41,6 +42,11 @@ export async function sendEmailBalanceSuccess(
   <p>
     잔금 결제가 정상적으로 완료되었습니다.<br/>
     이제 예약 결제가 모두 완료되었습니다.
+  </p>
+
+  <p style="font-size:14px;color:#2c3e50;margin:14px 0 0 0;">
+    보증금은 체크아웃 후 <strong>최대 48시간 이내</strong> 스태프가 숙소를 확인한 뒤 문제가 없을 경우
+    <strong>100% 환불</strong>됩니다.
   </p>
 
   <p style="font-size:14px;color:#555;">
@@ -74,6 +80,15 @@ export async function sendEmailBalanceSuccess(
       <td style="padding:8px 0;color:#555;">잔금 (60%)</td>
       <td style="padding:8px 0;font-weight:600;color:#27ae60;">€${p.balanceAmountEur}</td>
     </tr>
+    ${
+      p.securityDepositAmountEur
+        ? `
+    <tr>
+      <td style="padding:8px 0;color:#555;">환불 보증금</td>
+      <td style="padding:8px 0;font-weight:600;color:#27ae60;">€${p.securityDepositAmountEur}</td>
+    </tr>`
+        : ""
+    }
   </table>
 
   <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
@@ -85,6 +100,11 @@ export async function sendEmailBalanceSuccess(
   <p>
     Your balance payment has been successfully completed.<br/>
     Your booking is now fully confirmed.
+  </p>
+
+  <p style="font-size:14px;color:#2c3e50;margin:14px 0 0 0;">
+    After checkout, our staff will inspect the apartment within <strong>up to 48 hours</strong>. If no issues are found, the security
+    deposit will be <strong>fully (100%) refunded</strong>.
   </p>
 
   <p style="font-size:14px;color:#555;">
@@ -118,6 +138,15 @@ export async function sendEmailBalanceSuccess(
       <td style="padding:8px 0;color:#555;">Balance (60%)</td>
       <td style="padding:8px 0;font-weight:600;color:#27ae60;">€${p.balanceAmountEur}</td>
     </tr>
+    ${
+      p.securityDepositAmountEur
+        ? `
+    <tr>
+      <td style="padding:8px 0;color:#555;">Refundable security deposit</td>
+      <td style="padding:8px 0;font-weight:600;color:#27ae60;">€${p.securityDepositAmountEur}</td>
+    </tr>`
+        : ""
+    }
   </table>
 
   <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
