@@ -51,10 +51,10 @@ export default function BookingPage() {
       }
 
       // Use Supabase PostgREST directly (no backend changes).
-      // We only need inventory-blocking dates: confirmed bookings (and optionally payment_pending).
+      // We only need inventory-blocking dates: confirmed bookings + in-progress bookings.
       const url = new URL(`${supabaseUrl}/rest/v1/bookings`);
       url.searchParams.set('select', 'check_in,check_out,status');
-      url.searchParams.set('status', 'in.(confirmed,payment_pending)');
+      url.searchParams.set('status', 'in.(confirmed,payment_pending,pending_approval)');
       // Only future (or ongoing) bookings need to block.
       url.searchParams.set('check_out', `gte.${formatDateForApi(today)}`);
       url.searchParams.set('order', 'check_in.asc');
@@ -75,7 +75,7 @@ export default function BookingPage() {
       const rows = (await res.json()) as Array<{
         check_in: string;
         check_out: string;
-        status: 'confirmed' | 'payment_pending' | string;
+        status: 'confirmed' | 'payment_pending' | 'pending_approval' | string;
       }>;
 
       const nextConfirmed: DateRange[] = [];
@@ -83,14 +83,13 @@ export default function BookingPage() {
 
       for (const r of rows) {
         const start = parseDateFromApi(r.check_in);
-        const endExclusive = parseDateFromApi(r.check_out);
-        if (!start || !endExclusive) continue;
-        // check_out is not a blocked night; last blocked day is check_out - 1.
-        const endInclusive = addDays(endExclusive, -1);
+        const endInclusive = parseDateFromApi(r.check_out);
+        if (!start || !endInclusive) continue;
+        // Updated rule: check_out day is also blocked (inclusive).
         if (endInclusive.getTime() < start.getTime()) continue;
         const range = createRange(start, endInclusive);
         if (r.status === 'confirmed') nextConfirmed.push(range);
-        else if (r.status === 'payment_pending') nextPending.push(range);
+        else if (r.status === 'payment_pending' || r.status === 'pending_approval') nextPending.push(range);
       }
 
       if (cancelled) return;
