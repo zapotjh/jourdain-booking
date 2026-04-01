@@ -13,8 +13,20 @@
       "schedule": "0 10 * * *"
     },
     {
+      "path": "/api/cron/send-checkout-reminder",
+      "schedule": "0 9 * * *"
+    },
+    {
       "path": "/api/cron/reconcile-stripe-payments",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/send-security-deposit-refund-link",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/remind-security-deposit-refund-link",
+      "schedule": "0 12 * * *"
     },
     {
       "path": "/api/cron/security-deposit-hold",

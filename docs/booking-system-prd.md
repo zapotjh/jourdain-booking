@@ -217,6 +217,32 @@ clear
 premium  
 trustworthy
 
+Subject rule:
+
+- Korean-first subject is mandatory.
+- English may appear only as secondary/support (optional).
+
+---
+
+## Post-checkout security deposit refund (Admin workflow)
+
+Security deposit (REV 2) is charged together with the balance PaymentIntent. After check-out, the operator refunds **only the deposit amount** via partial refund.
+
+Workflow:
+
+- System generates/stores a persistent token `security_deposit_refund_token` (no expiry).
+- System emails admin a refund link after check-out (max once).
+- If not refunded, system re-sends the link 24h after check-out (max once).
+- Admin opens `/admin/refund-deposit?booking_id=...&token=...` and clicks “보증금 환불 실행”.
+- Server validates token + booking, blocks if already refunded, and creates a Stripe **partial refund** for `security_deposit_amount_cents` only.
+
+Operational emails (new):
+
+- `checkout_reminder_guest` (1 day before check-out, Paris date logic)
+- `checkout_reminder_admin` (1 day before check-out, Paris date logic)
+- `security_deposit_refund_request_admin` (after check-out)
+- `security_deposit_refund_reminder_admin` (24h after check-out if still not refunded)
+
 ---
 
 # Email A — Booking Request Received

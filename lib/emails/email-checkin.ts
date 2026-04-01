@@ -22,6 +22,11 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
   const safeName = escapeHtml(p.guestName || "게스트");
   const safeCheckIn = escapeHtml(p.checkIn);
 
+  const whatsappLink = "https://wa.me/8210982488666";
+  const whatsappQrSrc =
+    "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" +
+    encodeURIComponent(whatsappLink);
+
   return `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:640px;margin:0 auto;color:#1a1a1a;line-height:1.7;">
 
@@ -183,6 +188,28 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
     Leaving windows open may allow insects to enter.
   </p>
 
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;margin-top:16px;">WhatsApp</h3>
+
+  <p style="font-size:14px;color:#555;margin-top:14px;">
+    WhatsApp으로도 문의하실 수 있습니다. 아래 QR 코드를 스캔하시거나 링크를 눌러 주세요.
+  </p>
+  <p style="font-size:14px;color:#555;">
+    You can also reach us on WhatsApp. Scan the QR code below or open the link.
+  </p>
+
+  <p style="margin:10px 0 12px 0;">
+    <a href="${escapeHtml(whatsappLink)}" style="color:#1a73e8;word-break:break-all;">${escapeHtml(whatsappLink)}</a>
+  </p>
+  <img
+    src="${escapeHtml(whatsappQrSrc)}"
+    alt="WhatsApp QR"
+    width="240"
+    height="240"
+    style="display:block;width:240px;height:240px;border-radius:10px;border:1px solid #eee;background:#fff;"
+  />
+
   <h3 style="color:#2c3e50;margin-top:24px;">CHECK-OUT</h3>
 
   <p style="font-size:14px;color:#555;">
@@ -206,6 +233,13 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
 
   <p style="font-size:12px;color:#aaa;">
     This is an automated check-in email from L'appartement Jourdain.
+  </p>
+
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
+    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+  </p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
+    For any questions, replying directly to this email is the fastest way to reach us.
   </p>
 
 </div>

@@ -6,6 +6,9 @@ export const FROM =
   process.env.RESEND_FROM_EMAIL ??
   "L'appartement Jourdain <booking@lappartementjourdain.com>";
 
+// All guest replies should go to operations inbox.
+export const REPLY_TO = "apt.jourdain.paris@gmail.com";
+
 /** Canonical admin recipient. In test mode admin emails go here. */
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "";
 
@@ -94,6 +97,7 @@ export async function sendEmail({ to, subject, html, recipientType = "guest" }: 
       to: toSend,
       subject: subjectSend,
       html,
+      replyTo: REPLY_TO,
     });
 
     if (error) {

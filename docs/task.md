@@ -123,3 +123,25 @@
 - [x] 홀드 성공/실패 시 게스트+운영자 이메일 (`send-with-log`), `supabase/migrations/12_email_log_security_deposit_hold_failed.sql` 로 `email_log` unique 예외
 
 > NOTE (REV 2): 신규 예약은 `security_deposit_amount_cents > 0` 를 사용하며, 보증금은 잔금 결제 시 함께 청구(환불)됩니다. 따라서 신규 예약에는 **홀드 크론이 적용되면 안 됩니다** (legacy rows only).
+
+---
+
+## Phase 11 — Check-out reminders + security deposit refund workflow (REV 2) ✅
+
+- [x] 체크아웃 1일 전 리마인더 크론: `GET /api/cron/send-checkout-reminder`
+  - 조건: status=confirmed, payment_status=paid, check_out = tomorrow (Europe/Paris 기준)
+  - 게스트: `checkout_reminder_guest`
+  - 관리자: `checkout_reminder_admin`
+- [x] 체크아웃 후 보증금 환불 링크 발송 크론: `GET /api/cron/send-security-deposit-refund-link`
+  - 조건: status=confirmed, payment_status=paid, balance_paid=true, security_deposit_amount_cents>0, check_out <= todayParis
+  - 1회만 발송: `security_deposit_refund_link_sent_at IS NULL`
+  - 토큰 생성/저장: `security_deposit_refund_token`
+  - 관리자 이메일: `security_deposit_refund_request_admin`
+- [x] 24시간 후 리마인더 크론: `GET /api/cron/remind-security-deposit-refund-link`
+  - 조건: 위와 동일 + check_out <= yesterdayParis + refunded=false + reminder_sent_at IS NULL
+  - 관리자 이메일: `security_deposit_refund_reminder_admin`
+- [x] 관리자 환불 페이지: `/admin/refund-deposit?booking_id=...&token=...`
+  - 버튼 “보증금 환불 실행” → `POST /api/admin/refund-deposit`
+  - Stripe 부분 환불: amount = `security_deposit_amount_cents` (절대 전체 환불 금지)
+  - 멱등: Stripe idempotencyKey + DB 업데이트 가드(`security_deposit_refunded=false` AND `stripe_deposit_refund_id IS NULL`)
+- [x] 이메일 제목 규칙: Korean-first subject 필수 (English는 보조/옵션만)

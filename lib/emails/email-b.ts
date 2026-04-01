@@ -31,7 +31,7 @@ export async function sendEmailB(p: EmailBParams) {
   const safeCheckoutUrl = escapeHtml(p.checkoutUrl);
 
   const subject =
-    "[예약 승인] 보증금 결제 안내 - L'appartement Jourdain, Paris";
+    "[예약 승인] 예약금 결제 안내 - L'appartement Jourdain, Paris";
 
   const expiresFormatted = new Date(p.expiresAt).toLocaleString("ko-KR", {
     dateStyle: "long",
@@ -154,7 +154,7 @@ export async function sendEmailB(p: EmailBParams) {
 
   <a href="${safeCheckoutUrl}"
      style="display:inline-block;background:#2c3e50;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-size:16px;font-weight:600;margin-bottom:24px;">
-    Pay deposit — €${p.depositAmountEur}
+    Booking fee — €${p.depositAmountEur}
   </a>
 
   <p style="font-size:13px;color:#c0392b;font-weight:600;">
@@ -172,6 +172,13 @@ export async function sendEmailB(p: EmailBParams) {
 
   <p style="font-size:12px;color:#aaa;">
     This is an automated email regarding your approved booking and deposit payment.
+  </p>
+
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
+    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+  </p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
+    For any questions, replying directly to this email is the fastest way to reach us.
   </p>
 
 </div>`;

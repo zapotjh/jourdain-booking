@@ -121,6 +121,13 @@ export async function sendEmailA(p: EmailAParams) {
     This is an automated email regarding your booking request.
   </p>
 
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
+    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+  </p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
+    For any questions, replying directly to this email is the fastest way to reach us.
+  </p>
+
 </div>
 `;
 

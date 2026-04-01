@@ -206,6 +206,19 @@ Do not call this from any new or modified route. Use lib/emails/send-with-log.ts
 | `security_deposit_hold_failure_reason` | text | Last cron failure (e.g. missing PM) |
 | `last_security_deposit_hold_attempt_at` | timestamptz | Rate limit for cron (Paris daily) via `claim_security_deposit_hold_attempt` |
 
+## Security deposit refund workflow (REV 2, admin)
+
+New columns on `public.bookings`:
+
+| Column | Type | Purpose |
+|---|---|---|
+| `security_deposit_refund_token` | text | Persistent admin refund token (no expiry). Used to authorize refund-only action. |
+| `security_deposit_refund_link_sent_at` | timestamptz | When the initial admin refund-link email was sent. |
+| `security_deposit_refund_reminder_sent_at` | timestamptz | When the 24h reminder email was sent. |
+| `security_deposit_refunded` | boolean | True once deposit partial refund is completed. |
+| `security_deposit_refunded_at` | timestamptz | Timestamp for refund completion. |
+| `stripe_deposit_refund_id` | text | Stripe refund ID for the deposit-only refund. |
+
 ---
 
 # Database Migrations

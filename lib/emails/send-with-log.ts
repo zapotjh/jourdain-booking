@@ -24,6 +24,12 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#39;");
 }
 
+function formatEurFromCents(cents: number): string {
+  const n = Number(cents);
+  if (!Number.isFinite(n)) return "0.00";
+  return (Math.round(n) / 100).toFixed(2);
+}
+
 const ADMIN_TO = ADMIN_EMAIL || "admin@example.com";
 
 /** Guest email: resolve recipient and metadata for email_log (intended_to_email, actual_to_email, email_mode, redirected). */
@@ -196,6 +202,8 @@ export async function sendGuestBookingRejectedEmail(
   <p>요청하신 <strong>${params.checkIn}</strong> ~ <strong>${params.checkOut}</strong> (${params.nights}박) 예약이 현재 일정으로는 수락되지 않았습니다.</p>
   ${hostMessageBlock}
   <p>다른 날짜로 다시 문의해 주시거나, 문의 사항이 있으시면 이메일로 연락 부탁드립니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <p style="font-size:13px;color:#666;">L'appartement Jourdain, Paris</p>
 </div>`;
   let status: "sent" | "failed" = "failed";
@@ -232,7 +240,7 @@ export async function sendGuestApprovedPaymentLinkEmail(
   },
 ): Promise<EmailResult> {
   if (await alreadySentEmail(bookingId, "guest", "booking_approved_payment_link")) return { status: "deduped" };
-  const subject = "[예약 승인] 보증금 결제 안내 - L'appartement Jourdain, Paris";
+  const subject = "[예약 승인] 예약금 결제 안내 - L'appartement Jourdain, Paris";
   const metadata = { checkout_url: params.checkoutUrl };
   let status: "sent" | "failed" = "failed";
   let providerMessageId: string | null = null;
@@ -346,6 +354,8 @@ export async function sendGuestDepositPaymentFailedEmail(
   <p>안녕하세요, ${n}님</p>
   <p>예약금 결제가 완료되지 않았거나 만료되었습니다. 체크인 예정일: ${ci}.</p>
   <p>새 결제 링크가 필요하시면 호스트에게 연락해 주세요.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Your deposit payment was not completed or has expired. Check-in: ${co}. Please contact the host for a new payment link if needed.</p>
 </div>`;
@@ -417,7 +427,9 @@ export async function sendGuestBalancePaymentSucceededEmail(
     nights: number;
     totalPriceEur: string;
     depositAmountEur: string;
-    balanceAmountEur: string;
+    accommodationBalanceAmountEur: string;
+    securityDepositAmountEur?: string;
+    totalChargedAmountEur?: string;
   },
 ): Promise<EmailResult> {
   if (await alreadySentEmail(bookingId, "guest", "balance_payment_succeeded")) return { status: "deduped" };
@@ -449,7 +461,9 @@ export async function sendAdminBalancePaymentSucceededEmail(
     nights: number;
     totalPriceEur: string;
     depositAmountEur: string;
-    balanceAmountEur: string;
+    accommodationBalanceAmountEur: string;
+    securityDepositAmountEur?: string;
+    totalChargedAmountEur?: string;
   },
 ): Promise<EmailResult> {
   if (await alreadySentEmail(bookingId, "admin", "balance_payment_succeeded")) return { status: "deduped" };
@@ -459,13 +473,15 @@ export async function sendAdminBalancePaymentSucceededEmail(
   const ge = escapeHtml(params.guestEmail);
   const ci = escapeHtml(params.checkIn);
   const co = escapeHtml(params.checkOut);
+  const hasDeposit = !!(params.securityDepositAmountEur && params.securityDepositAmountEur.length > 0);
   const html = `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a;line-height:1.7;">
   <h2 style="color:#27ae60;">잔금 결제 완료</h2>
   <p>예약 ID: ${bid}</p>
   <p>게스트: ${gn} (${ge})</p>
   <p>체크인: ${ci} / 체크아웃: ${co} (${params.nights}박)</p>
-  <p>총 금액 €${escapeHtml(params.totalPriceEur)} (예약금 €${escapeHtml(params.depositAmountEur)} + 잔금 €${escapeHtml(params.balanceAmountEur)}) 결제 완료.</p>
+  <p>총 금액 €${escapeHtml(params.totalPriceEur)} (예약금 €${escapeHtml(params.depositAmountEur)} + 잔금 €${escapeHtml(params.accommodationBalanceAmountEur)}${hasDeposit ? ` + 환불 보증금 €${escapeHtml(params.securityDepositAmountEur ?? "")}` : ""}) 결제 완료.</p>
+  ${params.totalChargedAmountEur ? `<p><strong>이번 결제 합계(잔금+보증금):</strong> €${escapeHtml(params.totalChargedAmountEur)}</p>` : ""}
 </div>`;
   let status: "sent" | "failed" = "failed";
   let providerMessageId: string | null = null;
@@ -510,6 +526,8 @@ export async function sendGuestBalancePaymentFailedEmail(
   ${reason ? `<p>사유: ${reason}</p>` : ""}
   <p><strong>24시간 내에 자동으로 재시도되며, 3회 시도 모두 실패 시 예약이 자동으로 취소됩니다.</strong></p>
   <p>호스트가 별도로 결제 링크를 보내드리거나, 문의해 주세요.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Balance payment (€${amt}) could not be processed. The host may send a manual payment link. Check-in: ${ci}.</p>
 </div>`;
@@ -640,6 +658,288 @@ export async function sendAdminCheckinReminder1dEmail(
   return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
 }
 
+// ---- 14) Check-out reminder 1d (guest) ----
+export async function sendGuestCheckoutReminder1dEmail(
+  bookingId: string,
+  params: {
+    to: string;
+    guestName: string;
+    checkOut: string;
+  },
+): Promise<EmailResult> {
+  const emailType = "checkout_reminder_guest";
+  if (await alreadySentEmail(bookingId, "guest", emailType)) return { status: "deduped" };
+
+  const subject = "체크아웃 안내 | L’appartement Jourdain";
+
+  const n = escapeHtml(params.guestName);
+  const co = escapeHtml(params.checkOut);
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:640px;margin:0 auto;color:#1a1a1a;line-height:1.75;">
+  <h2 style="color:#2c3e50;margin:0 0 12px 0;">체크아웃 안내</h2>
+  <p style="margin:0 0 14px 0;">안녕하세요, ${n}님</p>
+  <p style="margin:0 0 14px 0;">체크아웃 시간은 <strong>오전 11시</strong>입니다. (체크아웃: ${co})</p>
+
+  <div style="margin:18px 0 0 0;padding:14px 14px;border:1px solid #eee;border-radius:10px;background:#fafafa;">
+    <p style="margin:0 0 10px 0;"><strong>퇴실전 필수 체크사항</strong></p>
+    <ol style="margin:0 0 10px 18px;padding:0;">
+      <li>히터 모두 끄기</li>
+      <li>조명 모두 끄기</li>
+      <li>창문을 모두 닫아주세요.<br/><span style="color:#555;">*창문을 닫지 않아 벌레가 들어오거나 도난이 발생하면 문제가 됩니다.</span></li>
+      <li>쓰레기는 건물 뒤쪽 마당의 쓰레기통에 버려 주세요.<br/><span style="color:#555;">초록색: 일반 쓰레기 / 노랑뚜껑: 재활용 쓰레기</span></li>
+    </ol>
+    <p style="margin:12px 0 8px 0;"><strong>퇴실 시</strong></p>
+    <ol style="margin:0 0 0 18px;padding:0;">
+      <li>열쇠를 다시 키박스에 넣어 주세요</li>
+      <li>코드: 3851</li>
+      <li>네 개의 자물쇠 숫자를 섞어 주세요</li>
+    </ol>
+  </div>
+
+  <p style="margin:18px 0 0 0;">감사합니다 :)<br/>파리에서 즐거운 시간 보내셨길 바랍니다!</p>
+
+  <hr style="margin:22px 0;border:none;border-top:1px solid #eee;"/>
+
+  <h3 style="color:#2c3e50;margin:0 0 10px 0;">Check-out instructions</h3>
+  <p style="margin:0 0 14px 0;">Hello ${n},</p>
+  <p style="margin:0 0 14px 0;">Check-out time is <strong>11:00 AM</strong>. (Check-out: ${co})</p>
+
+  <div style="margin:18px 0 0 0;padding:14px 14px;border:1px solid #eee;border-radius:10px;background:#fafafa;">
+    <p style="margin:0 0 10px 0;"><strong>Required checklist before leaving</strong></p>
+    <ol style="margin:0 0 10px 18px;padding:0;">
+      <li>Turn off all heaters</li>
+      <li>Turn off all lights</li>
+      <li>Please close all windows.<br/><span style="color:#555;">*If windows are left open, insects may enter or theft may occur, which can cause issues.</span></li>
+      <li>Please dispose of trash in the bins in the backyard behind the building.<br/><span style="color:#555;">Green: general waste / Yellow lid: recycling</span></li>
+    </ol>
+    <p style="margin:12px 0 8px 0;"><strong>At check-out</strong></p>
+    <ol style="margin:0 0 0 18px;padding:0;">
+      <li>Please return the key to the key box</li>
+      <li>Code: 3851</li>
+      <li>Scramble the four dials after locking</li>
+    </ol>
+  </div>
+
+  <p style="margin:18px 0 0 0;">Thank you :)<br/>We hope you had a wonderful time in Paris!</p>
+
+  <p style="margin:18px 0 0 0;font-size:13px;color:#666;">
+    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+  </p>
+  <p style="margin:6px 0 0 0;font-size:13px;color:#666;">
+    For any questions, replying directly to this email is the fastest way to reach us.
+  </p>
+</div>`;
+
+  let status: "sent" | "failed" = "failed";
+  let providerMessageId: string | null = null;
+  let errorMessage: string | null = null;
+  try {
+    const data = (await sendEmail({
+      to: params.to,
+      subject,
+      html,
+      recipientType: "guest",
+    })) as ResendData;
+    status = "sent";
+    providerMessageId = data?.id ?? null;
+  } catch (err) {
+    errorMessage = (err as Error)?.message ?? null;
+  }
+  const guestMeta = guestRedirectMetadata(params.to);
+  await doLog(bookingId, "guest", emailType, params.to, subject, status, providerMessageId, errorMessage, guestMeta);
+  if (status === "sent") logGuestSend(bookingId, emailType, params.to);
+  return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
+}
+
+// ---- 15) Check-out reminder 1d (admin) ----
+export async function sendAdminCheckoutReminder1dEmail(
+  bookingId: string,
+  params: {
+    guestName: string;
+    guestEmail: string;
+    checkIn: string;
+    checkOut: string;
+  },
+): Promise<EmailResult> {
+  const emailType = "checkout_reminder_admin";
+  if (await alreadySentEmail(bookingId, "admin", emailType)) return { status: "deduped" };
+
+  const subject = "체크아웃 예정 알림 | 관리자용";
+
+  const bid = escapeHtml(bookingId);
+  const gn = escapeHtml(params.guestName);
+  const ge = escapeHtml(params.guestEmail);
+  const ci = escapeHtml(params.checkIn);
+  const co = escapeHtml(params.checkOut);
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:640px;margin:0 auto;color:#1a1a1a;line-height:1.75;">
+  <h2 style="color:#2c3e50;margin:0 0 12px 0;">체크아웃 1일 전입니다.</h2>
+  <p style="margin:0 0 10px 0;">예약 ID: ${bid}</p>
+  <p style="margin:0 0 10px 0;">게스트: ${gn} (${ge})</p>
+  <p style="margin:0 0 14px 0;">체크인: ${ci} / 체크아웃: ${co}</p>
+  <p style="margin:0 0 18px 0;">향숙 아주머니께 체크아웃 알리미를 보내고 청소 스케줄을 확인하세요.</p>
+
+  <hr style="margin:22px 0;border:none;border-top:1px solid #eee;"/>
+
+  <h3 style="color:#2c3e50;margin:0 0 10px 0;">Check-out reminder | Admin</h3>
+  <p style="margin:0 0 10px 0;">Check-out is scheduled for tomorrow.</p>
+  <p style="margin:0;">Please notify the cleaning staff and confirm the cleaning schedule.</p>
+</div>`;
+
+  let status: "sent" | "failed" = "failed";
+  let providerMessageId: string | null = null;
+  let errorMessage: string | null = null;
+  try {
+    const data = (await sendAdminEmail({ subject, html })) as ResendData;
+    status = "sent";
+    providerMessageId = data?.id ?? null;
+  } catch (err) {
+    errorMessage = (err as Error)?.message ?? null;
+  }
+  const adminMeta = adminRedirectMetadata();
+  await doLog(bookingId, "admin", emailType, ADMIN_TO, subject, status, providerMessageId, errorMessage, adminMeta);
+  if (status === "sent") logAdminSend(bookingId, emailType);
+  return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
+}
+
+// ---- 16) Security deposit refund request (admin) ----
+export async function sendAdminSecurityDepositRefundRequestEmail(
+  bookingId: string,
+  params: {
+    guestName: string;
+    checkIn: string;
+    checkOut: string;
+    securityDepositAmountCents: number;
+    refundLinkUrl: string;
+  },
+): Promise<EmailResult> {
+  const emailType = "security_deposit_refund_request_admin";
+  if (await alreadySentEmail(bookingId, "admin", emailType)) return { status: "deduped" };
+
+  const subject = "보증금 환불 확인 요청 | 관리자용";
+
+  const bid = escapeHtml(bookingId);
+  const gn = escapeHtml(params.guestName);
+  const ci = escapeHtml(params.checkIn);
+  const co = escapeHtml(params.checkOut);
+  const amt = escapeHtml(formatEurFromCents(params.securityDepositAmountCents));
+  const link = escapeHtml(params.refundLinkUrl);
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:680px;margin:0 auto;color:#1a1a1a;line-height:1.75;">
+  <h2 style="color:#2c3e50;margin:0 0 12px 0;">보증금 환불 확인 요청</h2>
+  <p style="margin:0 0 10px 0;">체크아웃 확인 후 아래 링크에서 <strong>보증금만</strong> 환불하세요.</p>
+
+  <table style="width:100%;border-collapse:collapse;margin:14px 0 18px 0;">
+    <tr><td style="padding:6px 0;color:#555;">예약 ID</td><td style="padding:6px 0;font-size:12px;word-break:break-all;">${bid}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">게스트</td><td style="padding:6px 0;">${gn}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">숙박 일정</td><td style="padding:6px 0;">${ci} ~ ${co}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">청구된 보증금</td><td style="padding:6px 0;"><strong>€${amt}</strong></td></tr>
+  </table>
+
+  <p style="margin:0 0 8px 0;"><strong>환불 링크</strong></p>
+  <p style="margin:0 0 18px 0;"><a href="${link}" style="color:#1a73e8;word-break:break-all;">${link}</a></p>
+
+  <hr style="margin:22px 0;border:none;border-top:1px solid #eee;"/>
+
+  <h3 style="color:#2c3e50;margin:0 0 10px 0;">Refund security deposit | Admin</h3>
+  <p style="margin:0 0 10px 0;">After confirming check-out, please refund <strong>only the security deposit</strong> using the link below.</p>
+  <p style="margin:0 0 10px 0;">Guest: ${gn}</p>
+  <p style="margin:0 0 10px 0;">Stay: ${ci} ~ ${co}</p>
+  <p style="margin:0 0 14px 0;">Charged deposit: €${amt}</p>
+  <p style="margin:0;"><a href="${link}" style="color:#1a73e8;word-break:break-all;">${link}</a></p>
+</div>`;
+
+  let status: "sent" | "failed" = "failed";
+  let providerMessageId: string | null = null;
+  let errorMessage: string | null = null;
+  try {
+    const data = (await sendAdminEmail({ subject, html })) as ResendData;
+    status = "sent";
+    providerMessageId = data?.id ?? null;
+  } catch (err) {
+    errorMessage = (err as Error)?.message ?? null;
+  }
+  const adminMeta = {
+    security_deposit_amount_cents: Number(params.securityDepositAmountCents),
+    refund_link_url: params.refundLinkUrl,
+    ...adminRedirectMetadata(),
+  };
+  await doLog(bookingId, "admin", emailType, ADMIN_TO, subject, status, providerMessageId, errorMessage, adminMeta);
+  if (status === "sent") logAdminSend(bookingId, emailType);
+  return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
+}
+
+// ---- 17) Security deposit refund reminder (admin) ----
+export async function sendAdminSecurityDepositRefundReminderEmail(
+  bookingId: string,
+  params: {
+    guestName: string;
+    checkIn: string;
+    checkOut: string;
+    securityDepositAmountCents: number;
+    refundLinkUrl: string;
+  },
+): Promise<EmailResult> {
+  const emailType = "security_deposit_refund_reminder_admin";
+  if (await alreadySentEmail(bookingId, "admin", emailType)) return { status: "deduped" };
+
+  const subject = "보증금 환불 미처리 알림 | 관리자용";
+
+  const bid = escapeHtml(bookingId);
+  const gn = escapeHtml(params.guestName);
+  const ci = escapeHtml(params.checkIn);
+  const co = escapeHtml(params.checkOut);
+  const amt = escapeHtml(formatEurFromCents(params.securityDepositAmountCents));
+  const link = escapeHtml(params.refundLinkUrl);
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:680px;margin:0 auto;color:#1a1a1a;line-height:1.75;">
+  <h2 style="color:#c0392b;margin:0 0 12px 0;">보증금 환불 미처리 알림</h2>
+  <p style="margin:0 0 12px 0;">아직 보증금 환불이 처리되지 않았습니다. 체크아웃 확인 후 아래 링크에서 <strong>보증금만</strong> 환불하세요.</p>
+
+  <table style="width:100%;border-collapse:collapse;margin:14px 0 18px 0;">
+    <tr><td style="padding:6px 0;color:#555;">예약 ID</td><td style="padding:6px 0;font-size:12px;word-break:break-all;">${bid}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">게스트</td><td style="padding:6px 0;">${gn}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">숙박 일정</td><td style="padding:6px 0;">${ci} ~ ${co}</td></tr>
+    <tr><td style="padding:6px 0;color:#555;">보증금</td><td style="padding:6px 0;"><strong>€${amt}</strong></td></tr>
+  </table>
+
+  <p style="margin:0 0 8px 0;"><strong>환불 링크</strong></p>
+  <p style="margin:0 0 18px 0;"><a href="${link}" style="color:#1a73e8;word-break:break-all;">${link}</a></p>
+
+  <hr style="margin:22px 0;border:none;border-top:1px solid #eee;"/>
+
+  <h3 style="color:#2c3e50;margin:0 0 10px 0;">Deposit refund still pending | Admin</h3>
+  <p style="margin:0 0 10px 0;">The security deposit refund has not been processed yet. Please refund <strong>only the deposit</strong> using the link below.</p>
+  <p style="margin:0 0 10px 0;">Guest: ${gn}</p>
+  <p style="margin:0 0 10px 0;">Stay: ${ci} ~ ${co}</p>
+  <p style="margin:0 0 14px 0;">Deposit: €${amt}</p>
+  <p style="margin:0;"><a href="${link}" style="color:#1a73e8;word-break:break-all;">${link}</a></p>
+</div>`;
+
+  let status: "sent" | "failed" = "failed";
+  let providerMessageId: string | null = null;
+  let errorMessage: string | null = null;
+  try {
+    const data = (await sendAdminEmail({ subject, html })) as ResendData;
+    status = "sent";
+    providerMessageId = data?.id ?? null;
+  } catch (err) {
+    errorMessage = (err as Error)?.message ?? null;
+  }
+  const adminMeta = {
+    security_deposit_amount_cents: Number(params.securityDepositAmountCents),
+    refund_link_url: params.refundLinkUrl,
+    ...adminRedirectMetadata(),
+  };
+  await doLog(bookingId, "admin", emailType, ADMIN_TO, subject, status, providerMessageId, errorMessage, adminMeta);
+  if (status === "sent") logAdminSend(bookingId, emailType);
+  return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
+}
+
 // ---- 14) Webhook reconciliation alert (admin only) ----
 // Sent when a paid booking was in canceled state and was recovered to confirmed.
 // Only call after the recovery DB update has succeeded; do not claim recovery in email if update failed.
@@ -755,6 +1055,8 @@ export async function sendGuestSecurityDepositHoldFailedEmail(
   <p>체크인 전 보증금(카드 승인 보류) 처리가 실패했습니다. 금액: €${amt}</p>
   <p><strong>사유:</strong> ${reason}</p>
   <p>카드 한도·잔액을 확인하시거나, 호스트에게 문의해 주세요. 다음 파리 기준 날에 자동으로 한 번 더 시도될 수 있습니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Security deposit card authorization (hold) failed before check-in. Amount: €${amt}. Reason: ${reason}. Check-in ${ci} / Check-out ${co}.</p>
 </div>`;
@@ -889,6 +1191,8 @@ export async function sendGuestSecurityDepositHoldSucceededEmail(
   <p style="font-size:12px;color:#666;">참고 PI: ${pi}</p>
   <hr/>
   <p>Security deposit hold (€${amt}) authorized. Check-in ${ci} / ${co}.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
 </div>`;
   let status: "sent" | "failed" = "failed";
   let providerMessageId: string | null = null;

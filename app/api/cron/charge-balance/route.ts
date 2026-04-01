@@ -418,9 +418,13 @@ export async function GET(req: Request) {
         if (updatedRow && claimed.email) {
           const totalPriceEur = centsToEur(claimed.total_price_cents ?? 0);
           const depositAmountEur = centsToEur(claimed.deposit_amount_cents ?? 0);
-          const balanceAmountEur = centsToEur(
-            hasNewModelSecurityDeposit ? totalChargeCents : (claimed.balance_amount_cents ?? 0),
-          );
+          const accommodationBalanceAmountEur = centsToEur(claimed.balance_amount_cents ?? 0);
+          const securityDepositAmountEur = hasNewModelSecurityDeposit
+            ? centsToEur(securityDepositCents)
+            : undefined;
+          const totalChargedAmountEur = hasNewModelSecurityDeposit
+            ? centsToEur(totalChargeCents)
+            : undefined;
           const guestSuccessResult = await sendGuestBalancePaymentSucceededEmail(bookingId, {
             to: claimed.email,
             guestName: claimed.guest_name ?? "Guest",
@@ -429,7 +433,9 @@ export async function GET(req: Request) {
             nights: claimed.nights ?? 0,
             totalPriceEur,
             depositAmountEur,
-            balanceAmountEur,
+            accommodationBalanceAmountEur,
+            securityDepositAmountEur,
+            totalChargedAmountEur,
           });
           if (guestSuccessResult.status === "failed") {
             console.error("[charge-balance] guest balance_payment_succeeded email failed", { bookingId, error: guestSuccessResult.error });
@@ -442,7 +448,9 @@ export async function GET(req: Request) {
             nights: claimed.nights ?? 0,
             totalPriceEur,
             depositAmountEur,
-            balanceAmountEur,
+            accommodationBalanceAmountEur,
+            securityDepositAmountEur,
+            totalChargedAmountEur,
           });
           if (adminSuccessResult.status === "failed") {
             console.error("[charge-balance] admin balance_payment_succeeded email failed", { bookingId, error: adminSuccessResult.error });

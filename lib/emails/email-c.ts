@@ -317,7 +317,7 @@ export async function sendEmailC(p: EmailCParams) {
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
 
   <p style="font-size:14px;color:#555;">
-    궁금한 점이 있으시면 언제든 편하게 문의 주세요 :)
+    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
   </p>
 
   <p style="font-size:14px;color:#555;">
@@ -325,7 +325,7 @@ export async function sendEmailC(p: EmailCParams) {
   </p>
 
   <p style="font-size:14px;color:#555;">
-    If you have any questions, feel free to contact us anytime.
+    For any questions, replying directly to this email is the fastest way to reach us.
   </p>
 
   <p style="font-size:14px;color:#555;">

@@ -50,6 +50,7 @@ export function isTomorrowParis(dateStr: string): boolean {
  * Used e.g. security-deposit hold when check_in is exactly 3 days from today (Paris).
  */
 export function startOfParisPlusDaysFromToday(plusDays: number): string {
-  const safe = Math.max(0, Math.floor(Number(plusDays)));
-  return addCalendarDaysToParisYmd(getParisDateString(), safe);
+  const n = Number(plusDays);
+  const days = Number.isFinite(n) ? Math.floor(n) : 0;
+  return addCalendarDaysToParisYmd(getParisDateString(), days);
 }

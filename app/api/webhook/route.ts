@@ -130,7 +130,7 @@ export async function POST(req: Request) {
         if (balanceUpdated && bookingRow.email) {
           const totalPriceEur = ((bookingRow.total_price_cents ?? 0) / 100).toFixed(2);
           const depositAmountEur = ((bookingRow.deposit_amount_cents ?? 0) / 100).toFixed(2);
-          const balanceAmountEur = ((bookingRow.balance_amount_cents ?? 0) / 100).toFixed(2);
+          const accommodationBalanceAmountEur = ((bookingRow.balance_amount_cents ?? 0) / 100).toFixed(2);
           const guestRes = await sendGuestBalancePaymentSucceededEmail(bookingId, {
             to: bookingRow.email,
             guestName: bookingRow.guest_name ?? "Guest",
@@ -139,7 +139,7 @@ export async function POST(req: Request) {
             nights: bookingRow.nights ?? 0,
             totalPriceEur,
             depositAmountEur,
-            balanceAmountEur,
+            accommodationBalanceAmountEur,
           });
           if (guestRes.status === "failed") {
             console.error("[webhook] guest balance_payment_succeeded failed", { bookingId, error: guestRes.error });
@@ -152,7 +152,7 @@ export async function POST(req: Request) {
             nights: bookingRow.nights ?? 0,
             totalPriceEur,
             depositAmountEur,
-            balanceAmountEur,
+            accommodationBalanceAmountEur,
           });
           if (adminRes.status === "failed") {
             console.error("[webhook] admin balance_payment_succeeded failed", { bookingId, error: adminRes.error });
@@ -631,10 +631,13 @@ export async function POST(req: Request) {
       if (balanceUpdated && bookingRow.email) {
         const totalPriceEur = ((bookingRow.total_price_cents ?? 0) / 100).toFixed(2);
         const depositAmountEur = ((bookingRow.deposit_amount_cents ?? 0) / 100).toFixed(2);
-        const totalDueCents =
-          Number(bookingRow.balance_amount_cents ?? 0) +
-          Number(bookingRow.security_deposit_amount_cents ?? 0);
-        const balanceAmountEur = (totalDueCents / 100).toFixed(2);
+        const accommodationBalanceAmountEur = ((bookingRow.balance_amount_cents ?? 0) / 100).toFixed(2);
+        const securityDepositCents = Number(bookingRow.security_deposit_amount_cents ?? 0);
+        const securityDepositAmountEur = securityDepositCents > 0 ? (securityDepositCents / 100).toFixed(2) : undefined;
+        const totalChargedAmountEur =
+          securityDepositCents > 0
+            ? (((Number(bookingRow.balance_amount_cents ?? 0) + securityDepositCents) as number) / 100).toFixed(2)
+            : undefined;
         const guestRes = await sendGuestBalancePaymentSucceededEmail(bookingId, {
           to: bookingRow.email,
           guestName: bookingRow.guest_name ?? "Guest",
@@ -643,7 +646,9 @@ export async function POST(req: Request) {
           nights: bookingRow.nights ?? 0,
           totalPriceEur,
           depositAmountEur,
-          balanceAmountEur,
+          accommodationBalanceAmountEur,
+          securityDepositAmountEur,
+          totalChargedAmountEur,
         });
         if (guestRes.status === "failed") {
           console.error("[webhook] guest balance_payment_succeeded failed", { bookingId, error: guestRes.error });
@@ -656,7 +661,9 @@ export async function POST(req: Request) {
           nights: bookingRow.nights ?? 0,
           totalPriceEur,
           depositAmountEur,
-          balanceAmountEur,
+          accommodationBalanceAmountEur,
+          securityDepositAmountEur,
+          totalChargedAmountEur,
         });
         if (adminRes.status === "failed") {
           console.error("[webhook] admin balance_payment_succeeded failed", { bookingId, error: adminRes.error });
