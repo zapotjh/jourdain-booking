@@ -45,8 +45,7 @@ export async function sendEmailBalanceSuccess(
   </p>
 
   <p style="font-size:14px;color:#2c3e50;margin:14px 0 0 0;">
-    보증금은 체크아웃 후 <strong>최대 48시간 이내</strong> 스태프가 숙소를 확인한 뒤 문제가 없을 경우
-    <strong>100% 환불</strong>됩니다.
+    보증금은 체크아웃 후 최대 48시간 이내 스태프가 숙소를 확인한 뒤 문제가 없을 경우 100% 환불됩니다.
   </p>
 
   <p style="font-size:14px;color:#555;">
@@ -103,8 +102,8 @@ export async function sendEmailBalanceSuccess(
   </p>
 
   <p style="font-size:14px;color:#2c3e50;margin:14px 0 0 0;">
-    After checkout, our staff will inspect the apartment within <strong>up to 48 hours</strong>. If no issues are found, the security
-    deposit will be <strong>fully (100%) refunded</strong>.
+    After checkout, our staff will inspect the apartment within up to 48 hours. If no issues are found, the security deposit will be
+    fully (100%) refunded.
   </p>
 
   <p style="font-size:14px;color:#555;">

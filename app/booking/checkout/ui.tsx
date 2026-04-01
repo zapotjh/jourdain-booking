@@ -284,7 +284,7 @@ export function CheckoutClient() {
               checked={agreeDepositPolicy}
               onChange={setAgreeDepositPolicy}
               label={
-                '환불 보증금은 체크인 전 잔금 결제 시 함께 청구되며,\n체크아웃 후 문제가 없을 경우 100% 환불됩니다.\n\nA fully refundable security deposit will be charged together with the remaining balance before check-in.\nIt will be fully refunded after checkout if no damage is found.'
+                '환불 보증금은 파손/분실 등에 대비한 예치금이며, 퇴실후 문제가 없을 시 100% 환불 가능합니다.\n금액: 14박 이하 €500 / 14박 초과 €1,200\n결제 시점: 체크인 전 잔금(60%) 자동 결제 시 잔금과 함께 보증금이 함께 청구됩니다.\n환불: 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 전액 환불됩니다.\n\nA refundable security deposit is collected to cover potential damage or loss, and is eligible for a 100% refund if no issues are found after check-out.\nAmount: ≤14 nights €500 / >14 nights €1,200\nPayment timing: The security deposit is charged together with the remaining balance (60%) before check-in.\nRefund: The security deposit is fully refunded after check-out if no damage, loss, or excessive cleaning is found.'
               }
             />
           </section>
@@ -349,7 +349,7 @@ export function CheckoutClient() {
               <span>{totalPriceEur != null ? `€${totalPriceEur.toFixed(2)}` : '-'}</span>
             </div>
             <div style={{ padding: '10px 12px', borderRadius: 18, backgroundColor: 'rgba(13, 8, 34, 0.06)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12, fontWeight: 600 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
                 <span>지금 결제 (예약금 40%)</span>
                 <span>{depositEur != null ? `€${depositEur.toFixed(2)}` : '-'}</span>
               </div>
@@ -362,15 +362,21 @@ export function CheckoutClient() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                 <span>
-                  환불 보증금 (전액 환불)
+                  환불 보증금
                   <div style={{ fontSize: 10, opacity: 0.75 }}>Fully refundable security deposit</div>
                 </span>
                 <span>{securityDepositEur ? `€${securityDepositEur.toFixed(2)}` : '-'}</span>
               </div>
               <div style={{ marginTop: 8, fontSize: 10, lineHeight: 1.4, color: 'rgba(13, 8, 34, 0.78)' }}>
-                체크인 전 잔금 결제 시 보증금이 함께 청구되며, 체크아웃 후 문제가 없을 경우 100% 환불됩니다.
+                환불 보증금은 파손/분실 등에 대비한 예치금이며, 퇴실후 문제가 없을 시 100% 환불 가능합니다.
+                <div style={{ marginTop: 4 }}>금액: 14박 이하 €500 / 14박 초과 €1,200</div>
+                <div>결제 시점: 체크인 전 잔금(60%) 자동 결제 시 잔금과 함께 보증금이 함께 청구됩니다.</div>
+                <div>환불: 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 전액 환불됩니다.</div>
                 <div style={{ marginTop: 2 }}>
-                  The refundable security deposit is charged together with the remaining balance before check-in, and fully refunded after checkout if no damage is found.
+                  A refundable security deposit is collected to cover potential damage or loss, and is eligible for a 100% refund if no issues are found after check-out.
+                  <div style={{ marginTop: 4 }}>Amount: ≤14 nights €500 / &gt;14 nights €1,200</div>
+                  <div>Payment timing: The security deposit is charged together with the remaining balance (60%) before check-in.</div>
+                  <div>Refund: The security deposit is fully refunded after check-out if no damage, loss, or excessive cleaning is found.</div>
                 </div>
               </div>
             </div>

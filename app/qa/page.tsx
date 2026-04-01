@@ -96,26 +96,39 @@ export default function QAPage() {
               <p style={{ ...fluidQaBody, margin: '8px 0 0 0' }}>보증금(Deposit)</p>
               <ul style={{ ...listStyle, margin: '4px 0' }}>
                 <li>
-                  환불 보증금은 <strong>숨겨진 추가 비용이 아니라</strong> 파손/분실 등에 대비한{' '}
-                  <strong>100% 환불 가능한 예치금</strong>입니다.
+                  환불 보증금은 파손/분실 등에 대비한 예치금이며, 퇴실후 문제가 없을 시 100% 환불
+                  가능합니다.
                 </li>
                 <li>
-                  금액: <strong>14박 이하 €500</strong> / <strong>14박 초과 €1,200</strong>
+                  금액: 14박 이하 €500 / 14박 초과 €1,200
                 </li>
                 <li>
-                  결제 시점: <strong>체크인 전 잔금(60%) 자동 결제 시</strong> 잔금과 함께{' '}
-                  <strong>보증금이 함께 청구</strong>됩니다.
+                  결제 시점: 체크인 전 잔금(60%) 자동 결제 시 잔금과 함께 보증금이 함께 청구됩니다.
                 </li>
                 <li>
-                  환불: 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 <strong>전액 환불</strong>
-                  됩니다.
+                  환불: 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 전액 환불됩니다.
                 </li>
               </ul>
-              <div style={{ height: 6 }} />
-              <p style={{ ...fluidQaBody, fontSize: 'clamp(12px, 3vw, 13px)', opacity: 0.9 }}>
-                EN: A fully refundable security deposit will be charged together with the remaining balance before check-in. It will be
-                fully refunded after checkout if no damage is found. (≤14 nights €500 / &gt;14 nights €1,200)
-              </p>
+            </article>
+
+            <div style={{ height: 'clamp(18px, 4vw, 24px)' }} />
+
+            <article style={{ marginBottom: 'clamp(18px, 4vw, 24px)' }}>
+              <h3 style={fluidQaHeading3}>Security deposit (English)</h3>
+              <div style={{ height: 12 }} />
+              <ul style={{ ...listStyle, margin: '4px 0' }}>
+                <li>
+                  A refundable security deposit is collected to cover potential damage or loss, and is eligible for a 100% refund if no
+                  issues are found after check-out.
+                </li>
+                <li>Amount: ≤14 nights €500 / &gt;14 nights €1,200</li>
+                <li>
+                  Payment timing: The security deposit is charged together with the remaining balance (60%) before check-in.
+                </li>
+                <li>
+                  Refund: The security deposit is fully refunded after check-out if no damage, loss, or excessive cleaning is found.
+                </li>
+              </ul>
             </article>
 
             <article style={{ marginBottom: 'clamp(18px, 4vw, 24px)' }}>

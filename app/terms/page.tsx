@@ -219,14 +219,11 @@ export default function TermsPage() {
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5. 보증금 (Security Deposit)</h3>
           <p style={{ margin: '0 0 8px' }}>
-            숙소 및 비품 보호를 위해 환불 보증금이 적용됩니다. 보증금은 <strong>숨겨진 추가 비용이 아니라</strong> 파손·분실
-            등의 위험에 대비하기 위한 <strong>100% 환불 가능한 예치금</strong>입니다. 보증금은 <strong>체크인 전 잔금 결제 시</strong>{' '}
-            잔금(60%)과 함께 청구되며, 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 <strong>전액 환불</strong>됩니다.
+            숙소 및 비품 보호를 위해 환불 보증금이 적용됩니다. 보증금은 파손·분실 등의 위험에 대비하기 위한 100% 환불 가능한 예치금입니다. 보증금은 체크인 전 잔금 결제 시 잔금(60%)과 함께 청구되며, 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 전액 환불됩니다.
             <br />
-            금액: <strong>14박 이하 €500</strong> / <strong>14박 초과 €1,200</strong>
+            금액: 14박 이하 €500 / 14박 초과 €1,200
             <br />
-            환불 안내: 체크아웃 후 <strong>최대 48시간 이내</strong> 스태프가 숙소를 확인한 뒤 문제가 없을 경우{' '}
-            <strong>보증금은 100% 환불</strong>됩니다.
+            환불 안내: 체크아웃 후 최대 48시간 이내 스태프가 숙소를 확인한 뒤 문제가 없을 경우 100% 환불됩니다.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>
@@ -389,14 +386,11 @@ export default function TermsPage() {
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5. Security Deposit</h3>
           <p style={{ margin: '0 0 8px' }}>
-            A fully refundable security deposit applies to protect the property and its contents. This is <strong>not a hidden extra
-            fee</strong>, but a <strong>100% refundable deposit</strong>. It will be charged together with the remaining balance before
-            check-in, and fully refunded after checkout if no damage, loss, or excessive cleaning is identified.
+            A fully refundable security deposit applies to protect the property and its contents. It will be charged together with the remaining balance before check-in, and fully refunded after checkout if no damage, loss, or excessive cleaning is identified.
             <br />
-            Amount: <strong>≤14 nights €500</strong> / <strong>&gt;14 nights €1,200</strong>
+            Amount: ≤14 nights €500 / &gt;14 nights €1,200
             <br />
-            Refund timing: After checkout, our staff will inspect the apartment within <strong>up to 48 hours</strong>. If no issues are
-            found, the security deposit will be <strong>fully (100%) refunded</strong>.
+            Refund timing: After checkout, our staff will inspect the apartment within up to 48 hours. If no issues are found, the security deposit will be fully (100%) refunded.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5-1. Damage Charges</h3>
