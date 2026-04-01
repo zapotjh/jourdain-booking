@@ -62,8 +62,8 @@ export function calculateTotalPriceEur(checkIn: Date, checkOut: Date): number | 
   return Math.round(total * 100) / 100;
 }
 
-/** 청소비: 언제나 50 EUR. 맨 마지막 체크아웃 화면(/booking/checkout)에서만 숙박 요금에 더해진다. */
-export const CLEANING_FEE_EUR = 50;
+/** 청소비: 언제나 60 EUR. 맨 마지막 체크아웃 화면(/booking/checkout)에서만 숙박 요금에 더해진다. */
+export const CLEANING_FEE_EUR = 60;
 
 /** 표시용 보증금 비율. 백엔드 app/api/request-booking/route.ts 의 DEPOSIT_RATIO 와 동일한 값. */
 export const DEPOSIT_RATIO = 0.4;

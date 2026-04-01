@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppHeaderWithBack } from '../components/layout/AppHeaderWithBack';
 import { BottomTabBar } from '../components/layout/BottomTabBar';
@@ -36,17 +36,73 @@ export default function BookingPage() {
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
 
-  // Demo용 blocked ranges (UI 상태만): 실제 가용성 API 연동 전까지는 예시로만 사용.
-  const confirmedRanges = useMemo(
-    () => [
-      createRange(today, addDays(today, 3)), // 오늘~3일 뒤까지 예시 확정
-    ],
-    [today],
-  );
-  const pendingRanges = useMemo(
-    () => [createRange(addDays(today, 7), addDays(today, 9))],
-    [today],
-  );
+  const [confirmedRanges, setConfirmedRanges] = useState<DateRange[]>([]);
+  const [pendingRanges, setPendingRanges] = useState<DateRange[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBlockedRanges() {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.warn('[booking] missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY; calendar will not block booked dates');
+        return;
+      }
+
+      // Use Supabase PostgREST directly (no backend changes).
+      // We only need inventory-blocking dates: confirmed bookings (and optionally payment_pending).
+      const url = new URL(`${supabaseUrl}/rest/v1/bookings`);
+      url.searchParams.set('select', 'check_in,check_out,status');
+      url.searchParams.set('status', 'in.(confirmed,payment_pending)');
+      // Only future (or ongoing) bookings need to block.
+      url.searchParams.set('check_out', `gte.${formatDateForApi(today)}`);
+      url.searchParams.set('order', 'check_in.asc');
+
+      const res = await fetch(url.toString(), {
+        headers: {
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+        cache: 'no-store',
+      });
+
+      if (!res.ok) {
+        console.error('[booking] failed to load blocked dates', { status: res.status });
+        return;
+      }
+
+      const rows = (await res.json()) as Array<{
+        check_in: string;
+        check_out: string;
+        status: 'confirmed' | 'payment_pending' | string;
+      }>;
+
+      const nextConfirmed: DateRange[] = [];
+      const nextPending: DateRange[] = [];
+
+      for (const r of rows) {
+        const start = parseDateFromApi(r.check_in);
+        const endExclusive = parseDateFromApi(r.check_out);
+        if (!start || !endExclusive) continue;
+        // check_out is not a blocked night; last blocked day is check_out - 1.
+        const endInclusive = addDays(endExclusive, -1);
+        if (endInclusive.getTime() < start.getTime()) continue;
+        const range = createRange(start, endInclusive);
+        if (r.status === 'confirmed') nextConfirmed.push(range);
+        else if (r.status === 'payment_pending') nextPending.push(range);
+      }
+
+      if (cancelled) return;
+      setConfirmedRanges(nextConfirmed);
+      setPendingRanges(nextPending);
+    }
+
+    void loadBlockedRanges();
+    return () => {
+      cancelled = true;
+    };
+  }, [today]);
 
   const {
     weeksForView,
@@ -365,5 +421,12 @@ function formatDateForApi(date: Date): string {
   const mm = m < 10 ? `0${m}` : `${m}`;
   const dd = d < 10 ? `0${d}` : `${d}`;
   return `${y}-${mm}-${dd}`;
+}
+
+function parseDateFromApi(yyyyMmDd: string): Date | null {
+  const parts = String(yyyyMmDd || '').split('-').map((p) => Number(p));
+  const [y, m, d] = parts;
+  if (!y || !m || !d) return null;
+  return new Date(Date.UTC(y, m - 1, d));
 }
 

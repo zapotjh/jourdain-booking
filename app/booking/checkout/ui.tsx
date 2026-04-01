@@ -242,12 +242,33 @@ export function CheckoutClient() {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
-              <CheckboxRow
-                checked={agreeTerms}
-                onChange={setAgreeTerms}
-                label="이용약관을 읽었으며 약관에 동의합니다."
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                }}
+              >
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                    cursor: 'pointer',
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={agreeTerms}
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                    style={{ marginTop: 2 }}
+                  />
+                  <span style={{ whiteSpace: 'pre-line' }}>이용약관을 읽었으며 약관에 동의합니다.</span>
+                </label>
+
                 <button
                   type="button"
                   onClick={() => router.push('/terms')}
@@ -260,7 +281,9 @@ export function CheckoutClient() {
                     color: '#0D0822',
                     textDecoration: 'underline',
                     cursor: 'pointer',
-                    alignSelf: 'flex-end',
+                    flexShrink: 0,
+                    marginTop: 1,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   약관보기
