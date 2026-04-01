@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppHeaderWithBack } from '@/app/components/layout/AppHeaderWithBack';
 import { BottomTabBar } from '@/app/components/layout/BottomTabBar';
-import { computeTotalWithCleaning, computeDepositBalance } from '@/lib/booking-pricing';
+import { computeTotalWithCleaning, computeDepositBalance, getSecurityDepositTier } from '@/lib/booking-pricing';
 import { isValidInternationalPhone } from '@/lib/phone-validation';
 
 type ValidationState = {
@@ -46,6 +46,7 @@ export function CheckoutClient() {
   const totalPriceEur = breakdown?.totalEur ?? null;
   const depositEur = depositBalance?.depositEur ?? null;
   const balanceEur = depositBalance?.balanceEur ?? null;
+  const securityDepositEur = useMemo(() => getSecurityDepositTier(nights).securityDepositEur, [nights]);
 
   const [guestName, setGuestName] = useState('');
   const [email, setEmail] = useState('');
@@ -281,7 +282,9 @@ export function CheckoutClient() {
             <CheckboxRow
               checked={agreeDepositPolicy}
               onChange={setAgreeDepositPolicy}
-              label="보증금은 카드 홀드 방식이며, 문제 없을 시 자동 해제됩니다."
+              label={
+                '환불 보증금은 체크인 전 잔금 결제 시 함께 청구되며,\n체크아웃 후 문제가 없을 경우 100% 환불됩니다.\n\nA fully refundable security deposit will be charged together with the remaining balance before check-in.\nIt will be fully refunded after checkout if no damage is found.'
+              }
             />
           </section>
 
@@ -344,13 +347,31 @@ export function CheckoutClient() {
               <span>총 요금</span>
               <span>{totalPriceEur != null ? `€${totalPriceEur.toFixed(2)}` : '-'}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 12 }}>
-              <span>보증금 40%</span>
-              <span>{depositEur != null ? `€${depositEur.toFixed(2)}` : '-'}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-              <span>잔금 60%</span>
-              <span>{balanceEur != null ? `€${balanceEur.toFixed(2)}` : '-'}</span>
+            <div style={{ padding: '10px 12px', borderRadius: 18, backgroundColor: 'rgba(13, 8, 34, 0.06)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12, fontWeight: 600 }}>
+                <span>지금 결제 (예약금 40%)</span>
+                <span>{depositEur != null ? `€${depositEur.toFixed(2)}` : '-'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
+                <span>
+                  체크인 전 자동 결제 (잔금 60%)
+                  <div style={{ fontSize: 10, opacity: 0.75 }}>Remaining balance (60%) before check-in</div>
+                </span>
+                <span>{balanceEur != null ? `€${balanceEur.toFixed(2)}` : '-'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                <span>
+                  환불 보증금 (전액 환불)
+                  <div style={{ fontSize: 10, opacity: 0.75 }}>Fully refundable security deposit</div>
+                </span>
+                <span>{securityDepositEur ? `€${securityDepositEur.toFixed(2)}` : '-'}</span>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 10, lineHeight: 1.4, color: 'rgba(13, 8, 34, 0.78)' }}>
+                체크인 전 잔금 결제 시 보증금이 함께 청구되며, 체크아웃 후 문제가 없을 경우 100% 환불됩니다.
+                <div style={{ marginTop: 2 }}>
+                  The refundable security deposit is charged together with the remaining balance before check-in, and fully refunded after checkout if no damage is found.
+                </div>
+              </div>
             </div>
           </section>
 

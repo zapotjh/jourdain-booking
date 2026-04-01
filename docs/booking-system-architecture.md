@@ -62,7 +62,7 @@ POST /api/bookings/approve — **미구현.** 승인은 POST /api/host/approve �
 
 POST /api/webhook  
 app/api/webhook/route.ts  
-Handles Stripe checkout.session.completed (and charge.refunded, payment_intent.canceled, charge.dispute.created). Event-level idempotency via `stripe_webhook_events` table; duplicate event_id returns 200 without reprocessing. Confirms booking or recovers canceled+paid (reconciliation path). Returns non-2xx only for invalid signature or malformed payload.
+Handles Stripe checkout.session.completed, payment_intent.succeeded (balance with refundable security deposit), and charge.refunded / payment_intent.canceled / charge.dispute.created. Event-level idempotency via `stripe_webhook_events` table; duplicate event_id returns 200 without reprocessing. Confirms booking or recovers canceled+paid (reconciliation path). Returns non-2xx only for invalid signature or malformed payload.
 
 GET /api/cron/reconcile-stripe-payments  
 app/api/cron/reconcile-stripe-payments/route.ts  
@@ -80,7 +80,14 @@ Max 3 attempts. Sends success/failure emails via send-with-log.ts.
 
 GET /api/cron/security-deposit-hold  
 app/api/cron/security-deposit-hold/route.ts  
-Creates a **separate** Stripe PaymentIntent for the security-deposit authorization hold (`capture_method: manual`, `confirm: true`, EUR, deposit Customer + saved payment method). **Not** part of the 40% Checkout flow. Runs daily; selects bookings whose **Paris `check_in` is 3 days after today’s Paris date** (hold attempted three days before check-in). Idempotent: `claim_security_deposit_hold_attempt(booking_id)` RPC (≤ 1 attempt per Paris day) + Stripe idempotency key `security_deposit_hold:{booking_id}:{paris_today}:{claim_timestamp}` (claim time from DB; avoids Stripe replaying an old card error with no new issuer attempt). Skips if `stripe_security_deposit_payment_intent_id` already set (no duplicate holds). On success or failure (after DB update), sends guest + admin emails via `send-with-log.ts` (`security_deposit_hold_succeeded` / `security_deposit_hold_failed` with `metadata.paris_date` dedupe for failures).
+**Legacy only.** Creates a **separate** Stripe PaymentIntent for the security-deposit authorization hold (`capture_method: manual`). This must **not** run for new bookings using REV 2 refundable deposit model.
+
+Selection includes an explicit legacy guard:
+
+- `security_deposit_amount_cents = 0` (new model rows are excluded)
+- and `security_deposit_hold_cents > 0` (legacy-only amount)
+
+Other behavior remains the same for legacy rows: runs daily, selects bookings whose Paris `check_in` is 3 days after today, DB claim RPC + Stripe idempotency key, emails via `send-with-log.ts`.
 
 POST /api/host/security-deposit/release  
 Releases the uncaptured authorization (`paymentIntents.cancel`). Header `x-cron-secret` (same as crons).

@@ -168,13 +168,15 @@ export async function POST(req: Request) {
 
       const { data: pendingForHold } = await supabaseAdmin
         .from("bookings")
-        .select("nights")
+        .select("nights,security_deposit_amount_cents")
         .eq("id", bookingId)
         .eq("status", "payment_pending")
         .maybeSingle();
-      const securityDepositHoldCents = computeSecurityDepositHoldCentsFromStayLengthDays(
-        pendingForHold?.nights ?? 0,
-      );
+      const hasNewModelSecurityDeposit =
+        Number(pendingForHold?.security_deposit_amount_cents ?? 0) > 0;
+      const securityDepositHoldCents = hasNewModelSecurityDeposit
+        ? 0
+        : computeSecurityDepositHoldCentsFromStayLengthDays(pendingForHold?.nights ?? 0);
 
       // Race-safe: only confirm if still payment_pending (avoid overwriting canceled or already confirmed)
       const { data: updated, error: upErr } = await supabaseAdmin
@@ -291,7 +293,9 @@ export async function POST(req: Request) {
           });
 
           const securityDepositHoldCentsRecover =
-            computeSecurityDepositHoldCentsFromStayLengthDays(refetched.nights ?? 0);
+            Number((refetched as any).security_deposit_amount_cents ?? 0) > 0
+              ? 0
+              : computeSecurityDepositHoldCentsFromStayLengthDays(refetched.nights ?? 0);
 
           const { data: recovered, error: recoverErr } = await supabaseAdmin
             .from("bookings")
@@ -417,12 +421,15 @@ export async function POST(req: Request) {
           // CASE C: Retry update once.
           const { data: pendingRetry } = await supabaseAdmin
             .from("bookings")
-            .select("nights")
+            .select("nights,security_deposit_amount_cents")
             .eq("id", bookingId)
             .eq("status", "payment_pending")
             .maybeSingle();
-          const securityDepositHoldCentsRetry =
-            computeSecurityDepositHoldCentsFromStayLengthDays(pendingRetry?.nights ?? 0);
+          const hasNewModelSecurityDepositRetry =
+            Number(pendingRetry?.security_deposit_amount_cents ?? 0) > 0;
+          const securityDepositHoldCentsRetry = hasNewModelSecurityDepositRetry
+            ? 0
+            : computeSecurityDepositHoldCentsFromStayLengthDays(pendingRetry?.nights ?? 0);
 
           const { data: retried, error: retryErr } = await supabaseAdmin
             .from("bookings")
@@ -544,6 +551,128 @@ export async function POST(req: Request) {
         await markWebhookEventProcessed(event.id, bookingId, { branch_taken: "confirm_normal" });
       } catch (_) {}
       return NextResponse.json({ ok: true, updated: row ?? undefined }, { status: 200 });
+    }
+
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const bookingId = (pi.metadata?.booking_id as string | undefined) ?? null;
+      const kind = (pi.metadata?.kind as string | undefined) ?? null;
+
+      if (!bookingId) {
+        try {
+          await markWebhookEventProcessed(event.id, null, { branch_taken: "pi_succeeded_missing_booking_id" });
+        } catch (_) {}
+        return NextResponse.json({ ok: true, received: event.type }, { status: 200 });
+      }
+
+      if (kind !== "balance_with_security_deposit") {
+        try {
+          await markWebhookEventProcessed(event.id, bookingId, { branch_taken: "pi_succeeded_ignored", kind });
+        } catch (_) {}
+        return NextResponse.json({ ok: true, received: event.type }, { status: 200 });
+      }
+
+      const { data: bookingRow } = await supabaseAdmin
+        .from("bookings")
+        .select("id,balance_paid,security_deposit_amount_cents,email,guest_name,check_in,check_out,nights,total_price_cents,deposit_amount_cents,balance_amount_cents")
+        .eq("id", bookingId)
+        .single();
+
+      // Legacy safety: apply only when security_deposit_amount_cents > 0.
+      const applyNewModel = Number(bookingRow?.security_deposit_amount_cents ?? 0) > 0;
+      if (!bookingRow || !applyNewModel) {
+        try {
+          await markWebhookEventProcessed(event.id, bookingId, {
+            branch_taken: "pi_succeeded_balance_with_security_deposit",
+            booking_not_found_or_legacy: true,
+          });
+        } catch (_) {}
+        return NextResponse.json({ ok: true, received: event.type }, { status: 200 });
+      }
+
+      if (bookingRow.balance_paid) {
+        try {
+          await markWebhookEventProcessed(event.id, bookingId, {
+            branch_taken: "pi_succeeded_balance_with_security_deposit",
+            already_paid: true,
+          });
+        } catch (_) {}
+        return NextResponse.json({ ok: true, balance_already_paid: true }, { status: 200 });
+      }
+
+      const { data: balanceUpdated, error: balErr } = await supabaseAdmin
+        .from("bookings")
+        .update({
+          balance_paid: true,
+          balance_paid_at: new Date().toISOString(),
+          stripe_balance_payment_intent_id: pi.id,
+          // Same PaymentIntent: this refundable deposit was charged together with the balance.
+          stripe_security_deposit_payment_intent_id: pi.id,
+          balance_payment_attempts: 0,
+          balance_payment_failed_at: null,
+          balance_payment_failure_reason: null,
+        })
+        .eq("id", bookingId)
+        .eq("balance_paid", false)
+        .select("id")
+        .maybeSingle();
+
+      if (balErr) {
+        console.error("[webhook] balance_with_security_deposit update error", { bookingId, error: balErr });
+        try {
+          await markWebhookEventProcessed(event.id, bookingId, {
+            branch_taken: "pi_succeeded_balance_with_security_deposit",
+            db_error: balErr.message,
+          });
+        } catch (_) {}
+        return NextResponse.json({ ok: true }, { status: 200 });
+      }
+
+      if (balanceUpdated && bookingRow.email) {
+        const totalPriceEur = ((bookingRow.total_price_cents ?? 0) / 100).toFixed(2);
+        const depositAmountEur = ((bookingRow.deposit_amount_cents ?? 0) / 100).toFixed(2);
+        const totalDueCents =
+          Number(bookingRow.balance_amount_cents ?? 0) +
+          Number(bookingRow.security_deposit_amount_cents ?? 0);
+        const balanceAmountEur = (totalDueCents / 100).toFixed(2);
+        const guestRes = await sendGuestBalancePaymentSucceededEmail(bookingId, {
+          to: bookingRow.email,
+          guestName: bookingRow.guest_name ?? "Guest",
+          checkIn: bookingRow.check_in ?? "",
+          checkOut: bookingRow.check_out ?? "",
+          nights: bookingRow.nights ?? 0,
+          totalPriceEur,
+          depositAmountEur,
+          balanceAmountEur,
+        });
+        if (guestRes.status === "failed") {
+          console.error("[webhook] guest balance_payment_succeeded failed", { bookingId, error: guestRes.error });
+        }
+        const adminRes = await sendAdminBalancePaymentSucceededEmail(bookingId, {
+          guestName: bookingRow.guest_name ?? "Guest",
+          guestEmail: bookingRow.email,
+          checkIn: bookingRow.check_in ?? "",
+          checkOut: bookingRow.check_out ?? "",
+          nights: bookingRow.nights ?? 0,
+          totalPriceEur,
+          depositAmountEur,
+          balanceAmountEur,
+        });
+        if (adminRes.status === "failed") {
+          console.error("[webhook] admin balance_payment_succeeded failed", { bookingId, error: adminRes.error });
+        }
+      }
+
+      try {
+        await markWebhookEventProcessed(event.id, bookingId, {
+          branch_taken: "pi_succeeded_balance_with_security_deposit",
+          balance_paid: true,
+          stripe_balance_payment_intent_id: pi.id,
+          stripe_security_deposit_payment_intent_id: pi.id,
+        });
+      } catch (_) {}
+
+      return NextResponse.json({ ok: true, balance_paid: true }, { status: 200 });
     }
 
     if (event.type === "charge.refunded") {

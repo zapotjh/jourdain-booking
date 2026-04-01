@@ -2,7 +2,7 @@
 // Backend cents/deposit/balance logic remains canonical in app/api/request-booking/route.ts.
 
 /** 평일 1박 요금 (EUR). */
-export const WEEKDAY_RATE_EUR = 140;
+export const WEEKDAY_RATE_EUR = 143;
 /** 금/토 1박 요금 (EUR). */
 export const WEEKEND_RATE_EUR = 160;
 /** 7박 이상 할인율 (0–1). 표시용 18% = 0.18. */
@@ -67,6 +67,20 @@ export const CLEANING_FEE_EUR = 50;
 
 /** 표시용 보증금 비율. 백엔드 app/api/request-booking/route.ts 의 DEPOSIT_RATIO 와 동일한 값. */
 export const DEPOSIT_RATIO = 0.4;
+
+export type SecurityDepositTier = {
+  securityDepositEur: number;
+};
+
+/**
+ * 환불 보증금 (표시/계산 공통): 숙박 기간 기준 고정 티어.
+ * - 14박 이하: €500
+ * - 14박 초과: €1,200
+ */
+export function getSecurityDepositTier(nights: number): SecurityDepositTier {
+  if (!Number.isFinite(nights) || nights <= 0) return { securityDepositEur: 0 };
+  return { securityDepositEur: nights <= 14 ? 500 : 1200 };
+}
 
 export function roundToTwo(n: number): number {
   return Math.round(n * 100) / 100;

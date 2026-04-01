@@ -219,9 +219,9 @@ export default function TermsPage() {
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5. 보증금 (Security Deposit)</h3>
           <p style={{ margin: '0 0 8px' }}>
-            숙소 및 비품 보호를 위해 €800 보증금이 카드 승인(홀드, Pre-authorization) 방식으로 설정됩니다. 실제 청구는
-            발생하지 않으며, 파손, 분실, 과도한 오염 등이 없을 경우 체크아웃 후 자동 해제됩니다. 카드 홀드가 어려운 경우,
-            환불 가능한 보증금 계좌이체 방식으로 대체 가능합니다. 보증금 홀드는 일반적으로 체크인 1–2일 전 진행됩니다.
+            숙소 및 비품 보호를 위해 환불 보증금이 적용됩니다. 보증금은 <strong>숨겨진 추가 비용이 아니라</strong> 파손·분실
+            등의 위험에 대비하기 위한 <strong>100% 환불 가능한 예치금</strong>입니다. 보증금은 <strong>체크인 전 잔금 결제 시</strong>{' '}
+            잔금(60%)과 함께 청구되며, 체크아웃 후 파손·분실·과도한 오염 등이 없을 경우 <strong>전액 환불</strong>됩니다.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>
@@ -384,11 +384,9 @@ export default function TermsPage() {
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5. Security Deposit</h3>
           <p style={{ margin: '0 0 8px' }}>
-            A €800 security deposit will be placed as a card pre-authorization (hold) to protect the property and its contents. The
-            deposit is not charged and will be automatically released after check-out if no damage, loss, or excessive cleaning is
-            required. If any damage, loss, or excessive cleaning occurs, the actual cost may be charged up to the deposit amount. If a
-            card hold is not possible, a refundable bank transfer deposit may be accepted instead. The security deposit hold is typically
-            processed 1–2 days before check-in.
+            A fully refundable security deposit applies to protect the property and its contents. This is <strong>not a hidden extra
+            fee</strong>, but a <strong>100% refundable deposit</strong>. It will be charged together with the remaining balance before
+            check-in, and fully refunded after checkout if no damage, loss, or excessive cleaning is identified.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5-1. Damage Charges</h3>

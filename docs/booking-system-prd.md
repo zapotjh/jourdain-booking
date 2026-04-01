@@ -134,13 +134,20 @@ balance charged 30 days before check-in.
 
 # Security Deposit
 
-Security deposit hold amount is **fixed by stay length** (`security_deposit_hold_cents`, EUR): **≤14 nights: €500**; **>14 nights: €1,200**. Stay length = nights between `check_in` and `check_out` (same as `bookings.nights`).
+**REV 2 (current):** Security deposit is a **refundable deposit** charged together with the balance payment (not a separate hold) for new bookings.
 
-Implemented as a **real** Stripe **manual-capture** PaymentIntent (authorization hold), separate from the 40% deposit Checkout session. Same Customer and saved payment method as the deposit (off-session).
+- Tier (EUR): **≤14 nights: €500**; **>14 nights: €1,200**
+- Stored in DB: `security_deposit_amount_cents`
+- **Not included** in `total_price_cents` (accommodation revenue) and does **not** affect `deposit_amount_cents` (40%).
+- Charged at balance time (`/api/cron/charge-balance`): `amount = balance_amount_cents + security_deposit_amount_cents`
+- Stripe metadata on the balance PaymentIntent must include:
+  - `kind = balance_with_security_deposit`
+  - `accommodation_balance_cents`
+  - `security_deposit_amount_cents`
+  - `booking_id`
+- After checkout: refundable security deposit is refunded via **partial refund** on the same balance PaymentIntent charge.
 
-**When:** Cron `GET /api/cron/security-deposit-hold` (not during initial deposit payment). Selection: **Europe/Paris** — `check_in` date equals **3 calendar days after today** in Paris (hold attempted three days before check-in). Idempotent (DB claim + Stripe idempotency key).
-
-**After stay:** Normal path — `POST /api/host/security-deposit/release` (cancel authorization). Damage path — `POST /api/host/security-deposit/capture` (partial or full capture). Both require `x-cron-secret`.
+**Legacy (do not apply to new bookings):** The old `security_deposit_hold_cents` / manual-capture hold system may still exist for legacy rows, but it must not run for new rows where `security_deposit_amount_cents > 0`.
 
 ---
 
@@ -168,7 +175,7 @@ Cancel < 30 days before check-in → no refund
 
 Base short-stay pricing:
 
-- €140 per night
+- €143 per night (weekday = base + €3)
 - Friday and Saturday nights: €160 per night
 
 Discounts:

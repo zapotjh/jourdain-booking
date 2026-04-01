@@ -126,12 +126,14 @@ export async function GET(req: Request) {
   const { data: bookings, error: findErr } = await supabaseAdmin
     .from("bookings")
     .select(
-      "id,status,payment_status,currency,check_in,check_out,email,guest_name,security_deposit_hold_cents,stripe_payment_intent_id,stripe_security_deposit_payment_intent_id,security_deposit_hold_status,last_security_deposit_hold_attempt_at",
+      "id,status,payment_status,currency,check_in,check_out,email,guest_name,security_deposit_hold_cents,security_deposit_amount_cents,stripe_payment_intent_id,stripe_security_deposit_payment_intent_id,security_deposit_hold_status,last_security_deposit_hold_attempt_at",
     )
     .eq("status", "confirmed")
     .eq("payment_status", "paid")
     .eq("check_in", checkInHoldTargetParis)
     .gt("security_deposit_hold_cents", 0)
+    // REV 2: new bookings (security_deposit_amount_cents > 0) must never use the legacy hold system.
+    .eq("security_deposit_amount_cents", 0)
     .not("stripe_payment_intent_id", "is", null)
     .is("stripe_security_deposit_payment_intent_id", null)
     .or("security_deposit_hold_status.is.null,security_deposit_hold_status.eq.failed")

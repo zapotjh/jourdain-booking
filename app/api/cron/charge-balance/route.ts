@@ -28,6 +28,7 @@ async function sendBalanceFailedEmails(
     deposit_amount_cents?: number;
     balance_amount_cents?: number;
     balance_payment_attempts?: number;
+    security_deposit_amount_cents?: number;
   },
   failureReason: string,
   stripeBalancePaymentIntentId?: string | null,
@@ -35,12 +36,17 @@ async function sendBalanceFailedEmails(
 ) {
   const attemptCount = (booking.balance_payment_attempts ?? 0) + 1;
   const balanceAmountEur = centsToEur(booking.balance_amount_cents ?? 0);
+  const securityDepositAmountEur = centsToEur(booking.security_deposit_amount_cents ?? 0);
+  const totalDueEur = centsToEur(
+    Number(booking.balance_amount_cents ?? 0) + Number(booking.security_deposit_amount_cents ?? 0),
+  );
   const guestFailResult = await sendGuestBalancePaymentFailedEmail(booking.id, {
     to: booking.email ?? "",
     guestName: booking.guest_name ?? "Guest",
     checkIn: booking.check_in ?? "",
     checkOut: booking.check_out ?? "",
-    balanceAmountEur,
+    // Display as the total due at balance charge time (balance + refundable deposit).
+    balanceAmountEur: booking.security_deposit_amount_cents ? totalDueEur : balanceAmountEur,
     attemptNumber: attemptCount,
     failureReason,
   });
@@ -55,7 +61,7 @@ async function sendBalanceFailedEmails(
     nights: booking.nights ?? 0,
     totalPriceEur: centsToEur(booking.total_price_cents ?? 0),
     depositAmountEur: centsToEur(booking.deposit_amount_cents ?? 0),
-    balanceAmountEur,
+    balanceAmountEur: booking.security_deposit_amount_cents ? totalDueEur : balanceAmountEur,
     attemptCount,
     failureReason,
     stripeBalancePaymentIntentId: stripeBalancePaymentIntentId ?? null,
@@ -84,7 +90,7 @@ export async function GET(req: Request) {
   const { data: bookings, error: findErr } = await supabaseAdmin
     .from("bookings")
     .select(
-      "id,status,balance_due_at,balance_amount_cents,balance_paid,payment_status,stripe_payment_intent_id,currency,balance_payment_attempts,last_balance_attempt_at,email,guest_name,check_in,check_out,nights,total_price_cents,deposit_amount_cents,balance_amount_cents",
+      "id,status,balance_due_at,balance_amount_cents,security_deposit_amount_cents,balance_paid,payment_status,stripe_payment_intent_id,currency,balance_payment_attempts,last_balance_attempt_at,email,guest_name,check_in,check_out,nights,total_price_cents,deposit_amount_cents,balance_amount_cents",
     )
     .eq("status", "confirmed")
     .eq("balance_paid", false)
@@ -146,6 +152,7 @@ export async function GET(req: Request) {
       console.log("[charge-balance] processing booking (claimed)", {
         id: bookingId,
         balance_amount_cents: claimed.balance_amount_cents,
+        security_deposit_amount_cents: (claimed as any).security_deposit_amount_cents,
         balance_paid: claimed.balance_paid,
         payment_status: claimed.payment_status,
         stripe_payment_intent_id: claimed.stripe_payment_intent_id,
@@ -161,6 +168,12 @@ export async function GET(req: Request) {
         });
         continue;
       }
+
+      const securityDepositCentsRaw = Number((claimed as any).security_deposit_amount_cents ?? 0);
+      const hasNewModelSecurityDeposit =
+        Number.isFinite(securityDepositCentsRaw) && securityDepositCentsRaw > 0;
+      const securityDepositCents = hasNewModelSecurityDeposit ? securityDepositCentsRaw : 0;
+      const totalChargeCents = balanceCents + securityDepositCents;
 
       // 1) Load the original deposit PaymentIntent
       const depositPI = await stripe.paymentIntents.retrieve(
@@ -222,12 +235,12 @@ export async function GET(req: Request) {
           if (attemptCountMissing === 3 && claimed.email && balanceCents > 0) {
             balanceLinkMissing = await createBalanceCheckoutUrl({
               bookingId,
-              balanceAmountCents: balanceCents,
+              balanceAmountCents: totalChargeCents,
               customerEmail: claimed.email,
             });
           }
           await sendBalanceFailedEmails(
-            claimed,
+            { ...claimed, security_deposit_amount_cents: securityDepositCents },
             "missing customer on deposit PaymentIntent",
             null,
             balanceLinkMissing,
@@ -304,12 +317,12 @@ export async function GET(req: Request) {
           if (attemptCountNoPm === 3 && claimed.email && balanceCents > 0) {
             balanceLinkNoPm = await createBalanceCheckoutUrl({
               bookingId,
-              balanceAmountCents: balanceCents,
+              balanceAmountCents: totalChargeCents,
               customerEmail: claimed.email,
             });
           }
           await sendBalanceFailedEmails(
-            claimed,
+            { ...claimed, security_deposit_amount_cents: securityDepositCents },
             "no reusable payment_method for customer",
             null,
             balanceLinkNoPm,
@@ -341,7 +354,7 @@ export async function GET(req: Request) {
 
       const balancePI = await stripe.paymentIntents.create(
         {
-          amount: balanceCents,
+          amount: totalChargeCents,
           currency: "eur",
           customer: customerId,
           payment_method: paymentMethodId,
@@ -349,7 +362,13 @@ export async function GET(req: Request) {
           confirm: true,
           metadata: {
             booking_id: bookingId,
-            kind: "balance_60",
+            ...(hasNewModelSecurityDeposit
+              ? {
+                  kind: "balance_with_security_deposit",
+                  accommodation_balance_cents: String(balanceCents),
+                  security_deposit_amount_cents: String(securityDepositCents),
+                }
+              : { kind: "balance_60" }),
           },
         },
         { idempotencyKey },
@@ -399,7 +418,9 @@ export async function GET(req: Request) {
         if (updatedRow && claimed.email) {
           const totalPriceEur = centsToEur(claimed.total_price_cents ?? 0);
           const depositAmountEur = centsToEur(claimed.deposit_amount_cents ?? 0);
-          const balanceAmountEur = centsToEur(claimed.balance_amount_cents ?? 0);
+          const balanceAmountEur = centsToEur(
+            hasNewModelSecurityDeposit ? totalChargeCents : (claimed.balance_amount_cents ?? 0),
+          );
           const guestSuccessResult = await sendGuestBalancePaymentSucceededEmail(bookingId, {
             to: claimed.email,
             guestName: claimed.guest_name ?? "Guest",
@@ -477,12 +498,12 @@ export async function GET(req: Request) {
         if (attemptCountPi === 3 && claimed.email && balanceCents > 0) {
           balanceLinkPi = await createBalanceCheckoutUrl({
             bookingId,
-            balanceAmountCents: balanceCents,
+            balanceAmountCents: totalChargeCents,
             customerEmail: claimed.email,
           });
         }
         await sendBalanceFailedEmails(
-          claimed,
+          { ...claimed, security_deposit_amount_cents: securityDepositCents },
           reason,
           balancePI.id,
           balanceLinkPi,
@@ -497,6 +518,11 @@ export async function GET(req: Request) {
         id: bookingId,
         error: err,
       });
+
+      const securityDepositCentsRawEx = Number((claimed as any).security_deposit_amount_cents ?? 0);
+      const hasNewModelSecurityDepositEx =
+        Number.isFinite(securityDepositCentsRawEx) && securityDepositCentsRawEx > 0;
+      const securityDepositCentsEx = hasNewModelSecurityDepositEx ? securityDepositCentsRawEx : 0;
 
       const exceptNow = new Date().toISOString();
       const { data: updatedFailRow, error: upErr } = await supabaseAdmin
@@ -524,16 +550,17 @@ export async function GET(req: Request) {
       if (updatedFailRow) {
         const attemptCountEx = (claimed.balance_payment_attempts ?? 0) + 1;
         const balanceCentsEx = Number(claimed.balance_amount_cents ?? 0);
+        const totalChargeCentsEx = balanceCentsEx + securityDepositCentsEx;
         let balanceLinkEx: string | null = null;
         if (attemptCountEx === 3 && claimed.email && balanceCentsEx > 0) {
           balanceLinkEx = await createBalanceCheckoutUrl({
             bookingId,
-            balanceAmountCents: balanceCentsEx,
+            balanceAmountCents: totalChargeCentsEx,
             customerEmail: claimed.email,
           });
         }
         await sendBalanceFailedEmails(
-          claimed,
+          { ...claimed, security_deposit_amount_cents: securityDepositCentsEx },
           err?.message || "unexpected error in charge-balance cron",
           null,
           balanceLinkEx,

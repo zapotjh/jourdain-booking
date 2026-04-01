@@ -42,6 +42,7 @@ export async function GET(req: Request) {
     stripe_session_id: string | null;
     stripe_payment_intent_id?: string | null;
     payment_status?: string | null;
+    security_deposit_amount_cents?: number | null;
     email?: string | null;
     guest_name?: string | null;
     check_in?: string;
@@ -58,7 +59,7 @@ export async function GET(req: Request) {
 
   const { data: pending, error: e1 } = await supabaseAdmin
     .from("bookings")
-    .select("id,status,stripe_session_id,stripe_payment_intent_id,payment_status,email,guest_name,check_in,check_out,nights,long_stay,total_price_cents,deposit_amount_cents,balance_amount_cents,confirmed_at")
+    .select("id,status,stripe_session_id,stripe_payment_intent_id,payment_status,security_deposit_amount_cents,email,guest_name,check_in,check_out,nights,long_stay,total_price_cents,deposit_amount_cents,balance_amount_cents,confirmed_at")
     .eq("status", "payment_pending")
     .not("stripe_session_id", "is", null)
     .lt("payment_pending_expires_at", cutoff)
@@ -67,7 +68,7 @@ export async function GET(req: Request) {
 
   const { data: canceled, error: e2 } = await supabaseAdmin
     .from("bookings")
-    .select("id,status,stripe_session_id,stripe_payment_intent_id,payment_status,email,guest_name,check_in,check_out,nights,long_stay,total_price_cents,deposit_amount_cents,balance_amount_cents,confirmed_at")
+    .select("id,status,stripe_session_id,stripe_payment_intent_id,payment_status,security_deposit_amount_cents,email,guest_name,check_in,check_out,nights,long_stay,total_price_cents,deposit_amount_cents,balance_amount_cents,confirmed_at")
     .eq("status", "canceled")
     .not("stripe_session_id", "is", null)
     .limit(20);
@@ -118,9 +119,11 @@ export async function GET(req: Request) {
           : (session.payment_intent as { id?: string } | null)?.id ?? null;
 
       if (row.status === "canceled") {
-        const securityDepositHoldCents = computeSecurityDepositHoldCentsFromStayLengthDays(
-          row.nights ?? 0,
-        );
+        const hasNewModelSecurityDeposit =
+          Number(row.security_deposit_amount_cents ?? 0) > 0;
+        const securityDepositHoldCents = hasNewModelSecurityDeposit
+          ? 0
+          : computeSecurityDepositHoldCentsFromStayLengthDays(row.nights ?? 0);
         const { data: updated, error: upErr } = await supabaseAdmin
           .from("bookings")
           .update({
@@ -177,8 +180,11 @@ export async function GET(req: Request) {
         recovered.push(bookingId);
         console.log("[reconcile-stripe-payments] recovered", { bookingId, sessionId });
       } else if (row.status === "payment_pending") {
-        const securityDepositHoldCentsPending =
-          computeSecurityDepositHoldCentsFromStayLengthDays(row.nights ?? 0);
+        const hasNewModelSecurityDepositPending =
+          Number(row.security_deposit_amount_cents ?? 0) > 0;
+        const securityDepositHoldCentsPending = hasNewModelSecurityDepositPending
+          ? 0
+          : computeSecurityDepositHoldCentsFromStayLengthDays(row.nights ?? 0);
         const { data: updated, error: upErr } = await supabaseAdmin
           .from("bookings")
           .update({

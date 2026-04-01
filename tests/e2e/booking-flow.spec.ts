@@ -177,7 +177,10 @@ test.describe('Booking flow core QA', () => {
     await checkboxForLabel(page, '이용약관을 읽었으며 약관에 동의합니다.').check();
     await checkboxForLabel(page, '결제는 공식 결제사를 통해 안전하게 처리되며 카드 정보는 저장되지 않습니다.').check();
     await checkboxForLabel(page, '체크인 30일 전까지 전액 환불 가능 / 30일 이내 환불 불가 정책이 적용됩니다.').check();
-    await checkboxForLabel(page, '보증금은 카드 홀드 방식이며, 문제 없을 시 자동 해제됩니다.').check();
+    await checkboxForLabel(
+      page,
+      '환불 보증금은 체크인 전 잔금 결제 시 함께 청구되며,\n체크아웃 후 문제가 없을 경우 100% 환불됩니다.\n\nA fully refundable security deposit will be charged together with the remaining balance before check-in.\nIt will be fully refunded after checkout if no damage is found.',
+    ).check();
 
     // Check email/phone+name linked checks (should be enabled now)
     await checkboxForLabel(page, '입력한 이메일 주소로 예약 관련 안내를 받겠습니다.').check();
@@ -207,7 +210,10 @@ test.describe('Booking flow core QA', () => {
     await checkboxForLabel(page, '이용약관을 읽었으며 약관에 동의합니다.').check();
     await checkboxForLabel(page, '결제는 공식 결제사를 통해 안전하게 처리되며 카드 정보는 저장되지 않습니다.').check();
     await checkboxForLabel(page, '체크인 30일 전까지 전액 환불 가능 / 30일 이내 환불 불가 정책이 적용됩니다.').check();
-    await checkboxForLabel(page, '보증금은 카드 홀드 방식이며, 문제 없을 시 자동 해제됩니다.').check();
+    await checkboxForLabel(
+      page,
+      '환불 보증금은 체크인 전 잔금 결제 시 함께 청구되며,\n체크아웃 후 문제가 없을 경우 100% 환불됩니다.\n\nA fully refundable security deposit will be charged together with the remaining balance before check-in.\nIt will be fully refunded after checkout if no damage is found.',
+    ).check();
     await checkboxForLabel(page, '입력한 이메일 주소로 예약 관련 안내를 받겠습니다.').check();
     await checkboxForLabel(page, '입력한 전화번호와 이름으로 예약 관련 연락을 받겠습니다.').check();
 

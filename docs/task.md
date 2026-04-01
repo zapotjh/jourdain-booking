@@ -121,3 +121,5 @@
 - [x] `POST /api/host/security-deposit/capture` — partial/full capture (`amount_cents` 선택)
 - [x] `vercel.json` cron: `/api/cron/security-deposit-hold` (UTC 스케줄; 로직은 전부 Europe/Paris)
 - [x] 홀드 성공/실패 시 게스트+운영자 이메일 (`send-with-log`), `supabase/migrations/12_email_log_security_deposit_hold_failed.sql` 로 `email_log` unique 예외
+
+> NOTE (REV 2): 신규 예약은 `security_deposit_amount_cents > 0` 를 사용하며, 보증금은 잔금 결제 시 함께 청구(환불)됩니다. 따라서 신규 예약에는 **홀드 크론이 적용되면 안 됩니다** (legacy rows only).

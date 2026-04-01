@@ -5,13 +5,18 @@ import {
   sendGuestBookingPendingEmail,
   sendAdminBookingApprovalRequestEmail,
 } from "@/lib/emails/send-with-log";
-import { computeSecurityDepositHoldCentsFromStayLengthDays } from "@/lib/security-deposit-hold-cents";
 
 // Money: single source of truth is integer cents. Do not use EUR columns in logic.
 const DEPOSIT_RATIO = 0.4;
 const LONG_STAY_NIGHTS_THRESHOLD = 28;
 const BALANCE_DUE_DAYS_SHORT = 14;
 const BALANCE_DUE_DAYS_LONG = 30;
+
+function computeSecurityDepositAmountCentsFromStayLengthNights(nights: number): number {
+  if (!Number.isFinite(nights) || nights <= 0) return 0;
+  // REV 2 final: refundable deposit charged with balance (not a hold).
+  return nights <= 14 ? 50000 : 120000;
+}
 
 export async function POST(req: Request) {
   try {
@@ -60,8 +65,10 @@ export async function POST(req: Request) {
     const total_price_cents = Math.round(totalPriceEur * 100);
     const deposit_amount_cents = Math.round(total_price_cents * DEPOSIT_RATIO);
     const balance_amount_cents = total_price_cents - deposit_amount_cents;
-    const security_deposit_hold_cents =
-      computeSecurityDepositHoldCentsFromStayLengthDays(nights);
+    const security_deposit_amount_cents =
+      computeSecurityDepositAmountCentsFromStayLengthNights(nights);
+    // New model: no separate pre-check-in authorization hold for new bookings.
+    const security_deposit_hold_cents = 0;
 
     const long_stay = nights >= Number(long_stay_threshold_nights);
     const dueDays = long_stay ? BALANCE_DUE_DAYS_LONG : BALANCE_DUE_DAYS_SHORT;
@@ -86,12 +93,13 @@ export async function POST(req: Request) {
         deposit_amount_cents,
         balance_amount_cents,
         security_deposit_hold_cents,
+        security_deposit_amount_cents,
         long_stay,
         balance_due_at,
         approval_token: approvalToken,
       })
       .select(
-        "id,status,check_in,check_out,nights,approval_token,total_price_cents,deposit_amount_cents,balance_amount_cents,security_deposit_hold_cents,currency,long_stay,balance_due_at",
+        "id,status,check_in,check_out,nights,approval_token,total_price_cents,deposit_amount_cents,balance_amount_cents,security_deposit_hold_cents,security_deposit_amount_cents,currency,long_stay,balance_due_at",
       )
       .single();
 
