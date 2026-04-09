@@ -17,6 +17,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/cron/sync-airbnb-calendar",
+      "schedule": "*/30 * * * *"
+    },
+    {
       "path": "/api/cron/reconcile-stripe-payments",
       "schedule": "0 3 * * *"
     },
