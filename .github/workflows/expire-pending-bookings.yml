@@ -1,0 +1,38 @@
+name: expire-pending-bookings
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call expire-pending-bookings cron endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CRON_SECRET}" ]; then
+            echo "CRON_SECRET is not set"
+            exit 1
+          fi
+
+          url="https://lappartementjourdain.com/api/cron/expire-pending-bookings"
+          echo "Calling ${url}"
+
+          # Fail the job on non-2xx/3xx
+          http_code="$(curl -sS -o response.json -w "%{http_code}" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
+            "${url}")"
+
+          echo "HTTP ${http_code}"
+          cat response.json || true
+
+          if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 400 ]; then
+            echo "Request failed with HTTP ${http_code}"
+            exit 1
+          fi
+
