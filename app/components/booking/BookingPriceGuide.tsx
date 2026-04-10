@@ -72,8 +72,8 @@ export function BookingPriceGuide() {
           <span style={enTextStyle}>/ 7+ nights: {discount7Percent}% discount</span>
         </p>
         <p style={{ margin: 0 }}>
-          18일 이상 장기숙박시: {discount28Percent}% 할인 적용{' '}
-          <span style={enTextStyle}>/ 18+ nights: {discount28Percent}% discount</span>
+          28일 이상 장기숙박시: {discount28Percent}% 할인 적용{' '}
+          <span style={enTextStyle}>/ 28+ nights: {discount28Percent}% discount</span>
         </p>
         <p style={{ margin: 0 }}>&nbsp;</p>
         <p style={{ margin: 0, fontSize: 'clamp(10px, 2.6vw, 12px)' }}>
