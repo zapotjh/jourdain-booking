@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AppHeaderWithBack } from '../components/layout/AppHeaderWithBack';
 import { BottomTabBar } from '../components/layout/BottomTabBar';
 
@@ -20,6 +21,28 @@ export default function TermsPage() {
       }}
     >
       <AppHeaderWithBack titleKorean="전체 약관" titleEnglish="TERMS & CONDITIONS" />
+
+      <Link
+        href="/terms/en"
+        style={{
+          position: 'fixed',
+          top: 46,
+          right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
+          zIndex: 21,
+          padding: '8.5px 11.9px',
+          borderRadius: 999,
+          background: 'rgba(255,255,255,0.24)',
+          border: '1px solid rgba(13, 8, 34, 0.14)',
+          color: '#0D0822',
+          fontSize: '10.2px',
+          fontWeight: 600,
+          textDecoration: 'none',
+          lineHeight: 1.25,
+          fontFamily: 'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+        }}
+      >
+        EN
+      </Link>
 
       <main
         style={{
@@ -223,7 +246,7 @@ export default function TermsPage() {
             <br />
             금액: 14박 이하 €500 / 14박 초과 €1,200
             <br />
-            환불 안내: 체크아웃 후 최대 48시간 이내 스태프가 숙소를 확인한 뒤 문제가 없을 경우 100% 환불됩니다.
+            환불 안내: 체크아웃 후 최대 3-5일 이내 스태프가 숙소를 확인한 뒤 문제가 없을 경우 100% 환불됩니다.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>
@@ -390,7 +413,7 @@ export default function TermsPage() {
             <br />
             Amount: ≤14 nights €500 / &gt;14 nights €1,200
             <br />
-            Refund timing: After checkout, our staff will inspect the apartment within up to 48 hours. If no issues are found, the security deposit will be fully (100%) refunded.
+            Refund timing: After checkout, our staff will inspect the apartment within 3-5 business days. If no issues are found, the security deposit will be fully (100%) refunded.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5-1. Damage Charges</h3>
