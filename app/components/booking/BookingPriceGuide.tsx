@@ -10,6 +10,7 @@ import {
 export function BookingPriceGuide() {
   const discount7Percent = Math.round(DISCOUNT_RATE_7_NIGHTS * 100);
   const discount28Percent = Math.round(DISCOUNT_RATE_28_NIGHTS * 100);
+  const enTextStyle = { fontSize: 'clamp(15px, 3.6vw, 17px)', opacity: 0.85 } as const;
 
   return (
     <section
@@ -58,14 +59,27 @@ export function BookingPriceGuide() {
           lineHeight: 1.5,
         }}
       >
-        <p style={{ margin: 0 }}>평일 1박 {WEEKDAY_RATE_EUR}유로</p>
-        <p style={{ margin: 0 }}>주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로</p>
+        <p style={{ margin: 0 }}>
+          평일 1박 {WEEKDAY_RATE_EUR}유로 <span style={enTextStyle}>/ Weekday: €{WEEKDAY_RATE_EUR} per night</span>
+        </p>
+        <p style={{ margin: 0 }}>
+          주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로{' '}
+          <span style={enTextStyle}>/ Weekend (Fri/Sat): €{WEEKEND_RATE_EUR} per night</span>
+        </p>
         <p style={{ margin: 0 }}>&nbsp;</p>
-        <p style={{ margin: 0 }}>7일 이상 숙박시: {discount7Percent}% 할인 적용</p>
-        <p style={{ margin: 0 }}>28일 이상 장기숙박시: {discount28Percent}% 할인 적용</p>
+        <p style={{ margin: 0 }}>
+          7일 이상 숙박시: {discount7Percent}% 할인 적용{' '}
+          <span style={enTextStyle}>/ 7+ nights: {discount7Percent}% discount</span>
+        </p>
+        <p style={{ margin: 0 }}>
+          18일 이상 장기숙박시: {discount28Percent}% 할인 적용{' '}
+          <span style={enTextStyle}>/ 18+ nights: {discount28Percent}% discount</span>
+        </p>
         <p style={{ margin: 0 }}>&nbsp;</p>
         <p style={{ margin: 0, fontSize: 'clamp(10px, 2.6vw, 12px)' }}>
-          *본 숙소는 28일 이상 장기체류를 우선시 하여 운영되고 있습니다.
+          *본 숙소는 장기체류를 우선시 하여 운영되고 있습니다.
+          <br />
+          *This property is operated with a priority on longer stays.
         </p>
       </div>
     </section>

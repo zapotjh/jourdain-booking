@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import type React from 'react';
 
 type AppHeaderWithBackProps = {
   titleKorean: string;
@@ -8,19 +9,21 @@ type AppHeaderWithBackProps = {
   titleEnglish: string;
   /** Fallback if no history exists. */
   backHref?: string;
+  rightSlot?: React.ReactNode;
 };
 
-/** EXACTLY three spaces before and after `/` (preserved via whiteSpace: 'pre' on the title node). */
-const TITLE_JOIN = '   /   ';
+/** EXACTLY three spaces between labels (preserved via whiteSpace: 'pre' on the title node). */
+const TITLE_JOIN = '   ';
 
 export function AppHeaderWithBack({
   titleKorean,
   titleEnglish,
   backHref = '/',
+  rightSlot,
 }: AppHeaderWithBackProps) {
   const router = useRouter();
   const english = titleEnglish.toUpperCase();
-  const title = `${titleKorean}${TITLE_JOIN}${english}`;
+  const title = titleKorean ? `${titleKorean}${TITLE_JOIN}${english}` : english;
 
   return (
     <header
@@ -104,6 +107,23 @@ export function AppHeaderWithBack({
       >
         {title}
       </p>
+
+      {rightSlot ? (
+        <div
+          style={{
+            position: 'absolute',
+            right: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 21,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          {rightSlot}
+        </div>
+      ) : null}
     </header>
   );
 }

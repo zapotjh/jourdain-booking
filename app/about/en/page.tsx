@@ -37,11 +37,7 @@ const TEXT_COLUMN_STYLE = aboutTextColumnStyle;
 
 const SECTION_GAP = 'clamp(20px, 5vw, 32px)';
 
-const LANGUAGE_TOGGLE_STYLE: React.CSSProperties = {
-  position: 'fixed',
-  top: 46,
-  right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
-  zIndex: 21,
+const LANGUAGE_BUTTON_STYLE: React.CSSProperties = {
   padding: '8.5px 11.9px',
   borderRadius: 999,
   background: 'rgba(255,255,255,0.24)',
@@ -54,9 +50,17 @@ const LANGUAGE_TOGGLE_STYLE: React.CSSProperties = {
   fontFamily: 'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
 };
 
+// About EN page: increase all text sizes ~1.5x (English only).
+const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(15px, 3.9vw, 18px)' };
+const fluidDescriptionHeaderEn: React.CSSProperties = {
+  ...fluidDescriptionHeader,
+  fontSize: 'clamp(24px, 6.3vw, 27px)',
+};
+const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(19.5px, 4.8vw, 21.6px)' };
+
 function SectionLabel({ en }: { en: string }) {
   return (
-    <p style={fluidSectionLabel}>
+    <p style={fluidSectionLabelEn}>
       <span
         style={{
           width: 'clamp(5px, 1.2vw, 6px)',
@@ -75,7 +79,7 @@ function MapTitleLabel({ title }: { title: string }) {
   return (
     <p
       style={{
-        ...fluidSectionLabel,
+        ...fluidSectionLabelEn,
         fontWeight: 600,
         letterSpacing: 0,
         marginBottom: 'clamp(8px, 2vw, 12px)',
@@ -105,7 +109,7 @@ function ParagraphBlock({ text, boldLines }: { text: string; boldLines?: string[
           <p
             key={idx}
             style={{
-              ...fluidBodyText,
+              ...fluidBodyTextEn,
               fontWeight: isBold ? 700 : 500,
             }}
           >
@@ -277,11 +281,15 @@ export default function AboutEnPage() {
         }
         .aboutGalleryScroll::-webkit-scrollbar { display: none; height: 0; width: 0; }
       `}</style>
-      <AppHeaderWithBack titleKorean="" titleEnglish="ABOUT" />
-
-      <Link href="/about" style={LANGUAGE_TOGGLE_STYLE}>
-        KR
-      </Link>
+      <AppHeaderWithBack
+        titleKorean=""
+        titleEnglish="ABOUT"
+        rightSlot={
+          <Link href="/about" style={LANGUAGE_BUTTON_STYLE}>
+            KR
+          </Link>
+        }
+      />
 
       <main style={MAIN_STYLE}>
         {/* ABOUT */}
@@ -290,7 +298,7 @@ export default function AboutEnPage() {
           <div style={{ height: 18 }} />
           <div style={TEXT_COLUMN_STYLE}>
             <SectionLabel en="ABOUT" />
-            <h2 style={fluidDescriptionHeader}>Real Paris Living</h2>
+            <h2 style={fluidDescriptionHeaderEn}>Real Paris Living</h2>
             <ParagraphBlock
               text={[
                 "For those who want to experience Paris beyond the tourist trail —",

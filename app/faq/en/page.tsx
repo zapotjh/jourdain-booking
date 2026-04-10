@@ -10,11 +10,7 @@ import {
   fluidQaBody,
 } from '@/lib/content-layout';
 
-const LANGUAGE_TOGGLE_STYLE = {
-  position: 'fixed',
-  top: 46,
-  right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
-  zIndex: 21,
+const LANGUAGE_BUTTON_STYLE = {
   padding: '8.5px 11.9px',
   borderRadius: 999,
   background: 'rgba(255,255,255,0.24)',
@@ -45,11 +41,15 @@ export default function FAQEnPage() {
         position: 'relative',
       }}
     >
-      <AppHeaderWithBack titleKorean="" titleEnglish="FAQ" />
-
-      <Link href="/faq" style={LANGUAGE_TOGGLE_STYLE}>
-        KR
-      </Link>
+      <AppHeaderWithBack
+        titleKorean=""
+        titleEnglish="FAQ"
+        rightSlot={
+          <Link href="/faq" style={LANGUAGE_BUTTON_STYLE}>
+            KR
+          </Link>
+        }
+      />
 
       <main
         style={{

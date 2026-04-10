@@ -38,10 +38,6 @@ const TEXT_COLUMN_STYLE = aboutTextColumnStyle;
 const SECTION_GAP = 'clamp(20px, 5vw, 32px)';
 
 const LANGUAGE_TOGGLE_STYLE: React.CSSProperties = {
-  position: 'fixed',
-  top: 46,
-  right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
-  zIndex: 21,
   padding: '8.5px 11.9px',
   borderRadius: 999,
   background: 'rgba(255,255,255,0.24)',
@@ -152,9 +148,9 @@ function AboutPhoto({
             // We anchor it below the fixed header and align it to the same centered
             // content width (so it visually matches the original top-right placement).
             position: 'fixed',
-            top: 42,
+            top: 45,
             left: '50%',
-            transform: 'translateX(-50%)',
+            transform: 'translateX(-50%) translate(2px, 0px)',
             width: contentShellRelativeStyle.width as string,
             zIndex: 15,
             lineHeight: 0,
@@ -334,11 +330,15 @@ export default function AboutPage() {
         }
         .aboutGalleryScroll::-webkit-scrollbar { display: none; height: 0; width: 0; }
       `}</style>
-      <AppHeaderWithBack titleKorean="집 소개" titleEnglish="ABOUT" />
-
-      <Link href="/about/en" style={LANGUAGE_TOGGLE_STYLE}>
-        EN
-      </Link>
+      <AppHeaderWithBack
+        titleKorean="집 소개"
+        titleEnglish="ABOUT"
+        rightSlot={
+          <Link href="/about/en" style={LANGUAGE_TOGGLE_STYLE}>
+            EN
+          </Link>
+        }
+      />
 
       {/* Main content container — "내용": single vertical scroll */}
       <main style={MAIN_STYLE}>

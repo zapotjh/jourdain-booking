@@ -18,6 +18,7 @@ export function BookingSummary({
   warningMessage,
 }: BookingSummaryProps) {
   const hasRange = Boolean(checkIn && checkOut && nights > 0);
+  const enLabelStyle = { fontSize: 'clamp(15px, 3.6vw, 16px)', opacity: 0.85 } as const;
 
   return (
     <section
@@ -48,7 +49,7 @@ export function BookingSummary({
             color: '#0D0822',
           }}
         >
-          예약기간
+          예약기간 <span style={enLabelStyle}>/ Booking dates</span>
         </p>
         <div
           style={{
@@ -65,7 +66,9 @@ export function BookingSummary({
               <p style={{ margin: 0 }}>
                 {format(checkIn!)} - {format(checkOut!)}
               </p>
-              <p style={{ margin: 0 }}>{nights}박</p>
+              <p style={{ margin: 0 }}>
+                {nights}박 <span style={enLabelStyle}>/ {nights}Nights</span>
+              </p>
             </>
           ) : (
             <p style={{ margin: 0, opacity: 0.7 }}>날짜를 선택해 주세요.</p>
@@ -89,7 +92,7 @@ export function BookingSummary({
             color: '#0D0822',
           }}
         >
-          총 요금
+          총 요금 <span style={enLabelStyle}>/ Total</span>
         </p>
         <p
           style={{

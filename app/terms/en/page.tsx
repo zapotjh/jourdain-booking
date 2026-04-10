@@ -20,29 +20,30 @@ export default function TermsEnPage() {
         position: 'relative',
       }}
     >
-      <AppHeaderWithBack titleKorean="" titleEnglish="TERMS & CONDITIONS" />
-
-      <Link
-        href="/terms"
-        style={{
-          position: 'fixed',
-          top: 46,
-          right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
-          zIndex: 21,
-          padding: '8.5px 11.9px',
-          borderRadius: 999,
-          background: 'rgba(255,255,255,0.24)',
-          border: '1px solid rgba(13, 8, 34, 0.14)',
-          color: '#0D0822',
-          fontSize: '10.2px',
-          fontWeight: 600,
-          textDecoration: 'none',
-          lineHeight: 1.25,
-          fontFamily: 'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-        }}
-      >
-        KR
-      </Link>
+      <AppHeaderWithBack
+        titleKorean=""
+        titleEnglish="TERMS & CONDITIONS"
+        rightSlot={
+          <Link
+            href="/terms"
+            style={{
+              padding: '8.5px 11.9px',
+              borderRadius: 999,
+              background: 'rgba(255,255,255,0.24)',
+              border: '1px solid rgba(13, 8, 34, 0.14)',
+              color: '#0D0822',
+              fontSize: '10.2px',
+              fontWeight: 600,
+              textDecoration: 'none',
+              lineHeight: 1.25,
+              fontFamily:
+                'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+            }}
+          >
+            KR
+          </Link>
+        }
+      />
 
       <main
         style={{

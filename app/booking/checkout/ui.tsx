@@ -205,9 +205,11 @@ export function CheckoutClient() {
               backgroundColor: 'rgba(219, 200, 190, 0.85)',
             }}
           >
-            <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 6 }}>예약기간</div>
+            <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 6 }}>
+              예약기간 <span style={{ fontSize: 14, opacity: 0.85 }}>/ Dates</span>
+            </div>
             <div style={{ fontSize: 16, fontWeight: 600 }}>
-              {formatDisplayDate(checkInStr!)} ~ {formatDisplayDate(checkOutStr!)} ({nights}박)
+              {formatDisplayDate(checkInStr!)} ~ {formatDisplayDate(checkOutStr!)} ({nights}박/{nights}night)
             </div>
           </section>
 
@@ -221,11 +223,15 @@ export function CheckoutClient() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 14 }}>
-              <span>숙박 요금</span>
+              <span>
+                숙박 요금 <span style={{ fontSize: 16, opacity: 0.85 }}>/ Accommodation</span>
+              </span>
               <span>{stayPriceEur != null ? `€${stayPriceEur.toFixed(2)}` : '-'}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
-              <span>청소비</span>
+              <span>
+                청소비 <span style={{ fontSize: 16, opacity: 0.85 }}>/ Cleaning</span>
+              </span>
               <span>{cleaningFeeEur != null ? `€${cleaningFeeEur.toFixed(2)}` : '-'}</span>
             </div>
           </section>
@@ -266,7 +272,10 @@ export function CheckoutClient() {
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                     style={{ marginTop: 2 }}
                   />
-                  <span style={{ whiteSpace: 'pre-line' }}>이용약관을 읽었으며 약관에 동의합니다.</span>
+                  <span style={{ whiteSpace: 'pre-line' }}>
+                    이용약관을 읽었으며 약관에 동의합니다.
+                    {'\n'}I have read and agree to the Terms &amp; Conditions.
+                  </span>
                 </label>
 
                 <button
@@ -286,7 +295,7 @@ export function CheckoutClient() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  약관보기
+                  약관보기 / Terms
                 </button>
               </div>
             </div>
@@ -294,13 +303,15 @@ export function CheckoutClient() {
             <CheckboxRow
               checked={agreePaymentInfo}
               onChange={setAgreePaymentInfo}
-              label="결제는 공식 결제사를 통해 안전하게 처리되며 카드 정보는 저장되지 않습니다."
+              label={
+                '결제는 공식 결제사를 통해 안전하게 처리되며 카드 정보는 저장되지 않습니다.\nPayment is processed securely via an official payment provider and card details are not stored.'
+              }
             />
             <CheckboxRow
               checked={agreeCancelPolicy}
               onChange={setAgreeCancelPolicy}
               label={
-                '체크인 14/30일 전까지 전액 환불 가능\n 14/ 30일 이내 환불 불가 정책이 적용됩니다.(단/장기)'
+                '체크인 14/30일 전까지 전액 환불 가능\n14/30일 이내 환불 불가 정책이 적용됩니다.(단/장기)\n\nFull refund is available up to 14/30 days before check-in.\nNo refund applies within 14/30 days (short/long stay).'
               }
             />
             <CheckboxRow
@@ -325,11 +336,11 @@ export function CheckoutClient() {
             <CheckboxRow
               checked={agreeEmailConfirm}
               onChange={setAgreeEmailConfirm}
-              label="입력한 이메일 주소로 예약 관련 안내를 받겠습니다."
+              label={'입력한 이메일 주소로 예약 관련 안내를 받겠습니다.\nI will receive booking updates at the email address provided.'}
               disabled={!emailValidation.isValid}
             />
             <LabeledInput
-              label="이메일"
+              label="이메일 / Email"
               value={email}
               onChange={setEmail}
               placeholder="you@example.com"
@@ -340,17 +351,17 @@ export function CheckoutClient() {
             <CheckboxRow
               checked={agreePhoneConfirm}
               onChange={setAgreePhoneConfirm}
-              label="입력한 전화번호와 이름으로 예약 관련 연락을 받겠습니다."
+              label={'입력한 전화번호와 이름으로 예약 관련 연락을 받겠습니다.\nI will receive booking-related contact using the phone number and name provided.'}
               disabled={!phoneValidation.isValid || !nameIsValid}
             />
             <LabeledInput
-              label="전화번호"
+              label="전화번호 / Phone"
               value={phone}
               onChange={setPhone}
               placeholder="+82 10-1234-5678"
               error={phoneValidation.message}
             />
-            <LabeledInput label="이름" value={guestName} onChange={setGuestName} placeholder="홍길동" />
+            <LabeledInput label="이름 / Name" value={guestName} onChange={setGuestName} placeholder="홍길동" />
 
             <div style={{ marginTop: 4, fontSize: 10, color: 'rgba(13, 8, 34, 0.7)' }}>
               주요 지원 국가: +82 (KR), +1 (US), +44 (UK), +33 (FR), +81 (JP), +49 (DE), +86 (CN)
@@ -368,12 +379,16 @@ export function CheckoutClient() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span>총 요금</span>
+              <span>
+                총 요금 <span style={{ fontSize: 15, opacity: 0.85 }}>/ Total</span>
+              </span>
               <span>{totalPriceEur != null ? `€${totalPriceEur.toFixed(2)}` : '-'}</span>
             </div>
             <div style={{ padding: '10px 12px', borderRadius: 18, backgroundColor: 'rgba(13, 8, 34, 0.06)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
-                <span>지금 결제 (예약금 40%)</span>
+                <span>
+                  지금 결제 (예약금 40%) <span style={{ fontSize: 14, opacity: 0.85 }}>/ Pay now (Booking fee 40%)</span>
+                </span>
                 <span>{depositEur != null ? `€${depositEur.toFixed(2)}` : '-'}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
@@ -421,7 +436,7 @@ export function CheckoutClient() {
               cursor: canSubmit ? 'pointer' : 'default',
             }}
           >
-            {isSubmitting ? '전송 중...' : '예약 요청 보내기'}
+            {isSubmitting ? '전송 중... / Sending...' : '예약 요청 보내기 / Send booking request'}
           </button>
           {submitError && (
             <p role="alert" style={{ margin: '12px 0 0', fontSize: 12, color: '#C0392B', textAlign: 'center' }}>
