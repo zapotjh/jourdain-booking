@@ -50,13 +50,13 @@ const LANGUAGE_BUTTON_STYLE: React.CSSProperties = {
   fontFamily: 'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
 };
 
-// About EN page: increase all text sizes ~1.5x (English only).
-const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(15px, 3.9vw, 18px)' };
+// About EN page: shrink text to ~80% (English only).
+const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(8px, 2.1vw, 9.6px)' };
 const fluidDescriptionHeaderEn: React.CSSProperties = {
   ...fluidDescriptionHeader,
-  fontSize: 'clamp(24px, 6.3vw, 27px)',
+  fontSize: 'clamp(12.8px, 3.4vw, 14.4px)',
 };
-const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(19.5px, 4.8vw, 21.6px)' };
+const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(10.4px, 2.6vw, 11.52px)' };
 
 function SectionLabel({ en }: { en: string }) {
   return (
@@ -122,7 +122,15 @@ function ParagraphBlock({ text, boldLines }: { text: string; boldLines?: string[
 }
 
 /** Hero / section photos — identical width to icons & gallery slides. */
-function AboutPhoto({ src, alt }: { src: string; alt: string }) {
+function AboutPhoto({
+  src,
+  alt,
+  overlayTopRight,
+}: {
+  src: string;
+  alt: string;
+  overlayTopRight?: React.ReactNode;
+}) {
   return (
     <div style={contentShellRelativeStyle}>
       <Image
@@ -139,6 +147,24 @@ function AboutPhoto({ src, alt }: { src: string; alt: string }) {
         }}
         priority={false}
       />
+      {overlayTopRight ? (
+        <div
+          style={{
+            position: 'fixed',
+            top: 45,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: contentShellRelativeStyle.width as string,
+            zIndex: 15,
+            lineHeight: 0,
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-end',
+          }}
+        >
+          {overlayTopRight}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -161,6 +187,32 @@ function AboutIconStrip({ src, alt }: { src: string; alt: string }) {
         }}
       />
     </div>
+  );
+}
+
+function CroppedPngButton({ href, src, alt }: { href: string; src: string; alt: string }) {
+  return (
+    <Link
+      href={href}
+      aria-label={alt}
+      style={{
+        display: 'block',
+        position: 'relative',
+        width: 'clamp(96px, 28vw, 120px)',
+        height: 'clamp(32px, 9.5vw, 40px)',
+        overflow: 'hidden',
+        textDecoration: 'none',
+        flexShrink: 0,
+      }}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="120px"
+        style={{ objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+      />
+    </Link>
   );
 }
 
@@ -294,7 +346,11 @@ export default function AboutEnPage() {
       <main style={MAIN_STYLE}>
         {/* ABOUT */}
         <section style={{ marginBottom: SECTION_GAP }}>
-          <AboutPhoto src="/About-about-photo.png" alt="ABOUT PHOTO" />
+          <AboutPhoto
+            src="/About-about-photo.png"
+            alt="ABOUT PHOTO"
+            overlayTopRight={<CroppedPngButton href="/booking" src="/Home-Calender-button.png" alt="BOOK 예약하기" />}
+          />
           <div style={{ height: 18 }} />
           <div style={TEXT_COLUMN_STYLE}>
             <SectionLabel en="ABOUT" />

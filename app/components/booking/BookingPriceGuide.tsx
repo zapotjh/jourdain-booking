@@ -11,6 +11,7 @@ export function BookingPriceGuide() {
   const discount7Percent = Math.round(DISCOUNT_RATE_7_NIGHTS * 100);
   const discount28Percent = Math.round(DISCOUNT_RATE_28_NIGHTS * 100);
   const enTextStyle = { fontSize: 'clamp(15px, 3.6vw, 17px)', opacity: 0.85 } as const;
+  const enTextStyleTight = { ...enTextStyle, lineHeight: 1.25 } as const;
 
   return (
     <section
@@ -59,12 +60,13 @@ export function BookingPriceGuide() {
           lineHeight: 1.5,
         }}
       >
+        <p style={{ margin: 0 }}>평일 1박 {WEEKDAY_RATE_EUR}유로</p>
         <p style={{ margin: 0 }}>
-          평일 1박 {WEEKDAY_RATE_EUR}유로 <span style={enTextStyle}>/ Weekday: €{WEEKDAY_RATE_EUR} per night</span>
+          <span style={enTextStyleTight}>Sun-Thu €{WEEKDAY_RATE_EUR} per night</span>
         </p>
+        <p style={{ margin: 0 }}>주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로</p>
         <p style={{ margin: 0 }}>
-          주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로{' '}
-          <span style={enTextStyle}>/ Weekend (Fri/Sat): €{WEEKEND_RATE_EUR} per night</span>
+          <span style={enTextStyleTight}>Fri/Sat €{WEEKEND_RATE_EUR} per night</span>
         </p>
         <p style={{ margin: 0 }}>&nbsp;</p>
         <p style={{ margin: 0 }}>

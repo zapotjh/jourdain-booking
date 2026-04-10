@@ -1,7 +1,5 @@
 'use client';
 
-import { format } from './date-format';
-
 type BookingSummaryProps = {
   checkIn: Date | null;
   checkOut: Date | null;
@@ -19,6 +17,15 @@ export function BookingSummary({
 }: BookingSummaryProps) {
   const hasRange = Boolean(checkIn && checkOut && nights > 0);
   const enLabelStyle = { fontSize: 'clamp(15px, 3.6vw, 16px)', opacity: 0.85 } as const;
+
+  const formatSlash = (d: Date) => {
+    const y = d.getUTCFullYear();
+    const m = d.getUTCMonth() + 1;
+    const day = d.getUTCDate();
+    const mm = m < 10 ? `0${m}` : `${m}`;
+    const dd = day < 10 ? `0${day}` : `${day}`;
+    return `${y} / ${mm} / ${dd}`;
+  };
 
   return (
     <section
@@ -49,7 +56,7 @@ export function BookingSummary({
             color: '#0D0822',
           }}
         >
-          예약기간 <span style={enLabelStyle}>/ Booking dates</span>
+          예약기간 <span style={enLabelStyle}>/ Dates</span>
         </p>
         <div
           style={{
@@ -64,10 +71,7 @@ export function BookingSummary({
           {hasRange ? (
             <>
               <p style={{ margin: 0 }}>
-                {format(checkIn!)} - {format(checkOut!)}
-              </p>
-              <p style={{ margin: 0 }}>
-                {nights}박 <span style={enLabelStyle}>/ {nights}Nights</span>
+                {formatSlash(checkIn!)} - {formatSlash(checkOut!)} ({nights}박/{nights}nights)
               </p>
             </>
           ) : (

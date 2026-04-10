@@ -209,7 +209,7 @@ export function CheckoutClient() {
               예약기간 <span style={{ fontSize: 14, opacity: 0.85 }}>/ Dates</span>
             </div>
             <div style={{ fontSize: 16, fontWeight: 600 }}>
-              {formatDisplayDate(checkInStr!)} ~ {formatDisplayDate(checkOutStr!)} ({nights}박/{nights}night)
+              {formatDisplayDateSlash(checkInStr!)} - {formatDisplayDateSlash(checkOutStr!)} ({nights}박/{nights}nights)
             </div>
           </section>
 
@@ -387,7 +387,8 @@ export function CheckoutClient() {
             <div style={{ padding: '10px 12px', borderRadius: 18, backgroundColor: 'rgba(13, 8, 34, 0.06)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 12 }}>
                 <span>
-                  지금 결제 (예약금 40%) <span style={{ fontSize: 14, opacity: 0.85 }}>/ Pay now (Booking fee 40%)</span>
+                  지금 결제 (예약금 40%)
+                  <div style={{ fontSize: 10, opacity: 0.75 }}>Pay now (Booking fee 40%)</div>
                 </span>
                 <span>{depositEur != null ? `€${depositEur.toFixed(2)}` : '-'}</span>
               </div>
@@ -429,14 +430,24 @@ export function CheckoutClient() {
               padding: '14px 16px',
               borderRadius: 999,
               border: 'none',
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: 600,
               color: canSubmit ? 'rgba(251, 188, 5, 1.0)' : 'rgba(251, 188, 5, 0.3)',
               backgroundColor: canSubmit ? 'rgba(13, 8, 34, 1.0)' : 'rgba(13, 8, 34, 0.3)',
               cursor: canSubmit ? 'pointer' : 'default',
             }}
           >
-            {isSubmitting ? '전송 중... / Sending...' : '예약 요청 보내기 / Send booking request'}
+            {isSubmitting ? (
+              <span>
+                전송 중...
+                <span style={{ display: 'block', fontSize: 14, opacity: 0.9 }}>SENDING...</span>
+              </span>
+            ) : (
+              <span>
+                예약 요청 보내기
+                <span style={{ display: 'block', fontSize: 14, opacity: 0.9 }}>BOOKING REQUEST</span>
+              </span>
+            )}
           </button>
           {submitError && (
             <p role="alert" style={{ margin: '12px 0 0', fontSize: 12, color: '#C0392B', textAlign: 'center' }}>
@@ -529,5 +540,13 @@ function formatDisplayDate(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map((part) => Number(part));
   if (!y || !m || !d) return dateStr;
   return `${y}.${m < 10 ? `0${m}` : m}.${d < 10 ? `0${d}` : d}`;
+}
+
+function formatDisplayDateSlash(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map((part) => Number(part));
+  if (!y || !m || !d) return dateStr;
+  const mm = m < 10 ? `0${m}` : m;
+  const dd = d < 10 ? `0${d}` : d;
+  return `${y} / ${mm} / ${dd}`;
 }
 

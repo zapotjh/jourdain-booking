@@ -112,7 +112,7 @@ export function AppHeaderWithBack({
         <div
           style={{
             position: 'absolute',
-            right: 16,
+            right: 'calc((100vw - min(640px, calc(100vw - 24px))) / 2 + 12px)',
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 21,
