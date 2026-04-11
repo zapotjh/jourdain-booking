@@ -107,14 +107,14 @@ export async function sendEmailB(p: EmailBParams) {
 
   <hr style="margin:40px 0;border:none;border-top:1px solid #eee;" />
 
-  <h3 style="color:#2c3e50;">Booking Approved — Please Complete Your Deposit Payment</h3>
+  <h3 style="color:#2c3e50;">Booking Approved — Please Complete Your Booking Fee Payment</h3>
 
   <p>Dear <strong>${guestName}</strong>,</p>
 
   <p>
     Your booking request for <strong>L'appartement Jourdain</strong> has been approved by the host.<br/>
-    Please use the button below to pay the deposit, which is 40% of the total booking amount.<br/>
-    Your reservation will be confirmed once the deposit payment is successfully completed.
+    Please use the button below to pay the booking fee, which is 40% of the total booking amount.<br/>
+    Your reservation will be confirmed once the booking fee payment is successfully completed.
   </p>
 
   <table style="width:100%;border-collapse:collapse;margin:24px 0;">
@@ -135,7 +135,7 @@ export async function sendEmailB(p: EmailBParams) {
       <td style="padding:8px 0;font-weight:600;">€${p.totalPriceEur}</td>
     </tr>
     <tr>
-      <td style="padding:8px 0;color:#555;border-top:1px solid #eee;">Due now — deposit (40%)</td>
+      <td style="padding:8px 0;color:#555;border-top:1px solid #eee;">Due now — booking fee (40%)</td>
       <td style="padding:8px 0;font-weight:600;color:#27ae60;border-top:1px solid #eee;">€${p.depositAmountEur}</td>
     </tr>
     <tr>
@@ -171,11 +171,11 @@ export async function sendEmailB(p: EmailBParams) {
   </p>
 
   <p style="font-size:12px;color:#aaa;">
-    This is an automated email regarding your approved booking and deposit payment.
+    This is an automated email regarding your approved booking and booking fee payment.
   </p>
 
   <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
     For any questions, replying directly to this email is the fastest way to reach us.

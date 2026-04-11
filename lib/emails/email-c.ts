@@ -73,13 +73,8 @@ export async function sendEmailC(p: EmailCParams) {
     75020 Paris
   </p>
 
-  <p style="font-size:14px;color:#555;">
-    First building door code: B5791
-  </p>
-
   <ul style="font-size:14px;color:#555;padding-left:20px;margin:8px 0 16px 0;">
     <li>4th floor (French building style – stairs)</li>
-    <li>Door on the right with a blue check doormat</li>
     <li>No private parking inside the building</li>
   </ul>
 
@@ -317,7 +312,7 @@ export async function sendEmailC(p: EmailCParams) {
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
 
   <p style="font-size:14px;color:#555;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
 
   <p style="font-size:14px;color:#555;">

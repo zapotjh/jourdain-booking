@@ -5,12 +5,8 @@
  */
 
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
 import { sendGuestApprovedPaymentLinkEmail } from "@/lib/emails/send-with-log";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 export type ApproveBookingResult =
   | { ok: true; checkoutUrl: string; bookingId: string }

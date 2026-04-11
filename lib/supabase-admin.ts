@@ -4,16 +4,25 @@ let cached: SupabaseClient | null = null;
 
 function getSupabaseAdmin(): SupabaseClient {
   if (cached) return cached;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
   if (process.env.NODE_ENV === "development") {
     console.log("SUPABASE_URL present?", !!url);
     console.log("SERVICE_ROLE present?", !!key);
   }
-  if (!url || !key) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+  let resolvedUrl = url;
+  let resolvedKey = key;
+  if (!resolvedUrl || !resolvedKey) {
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      resolvedUrl = "https://build-placeholder.invalid";
+      resolvedKey = "build-placeholder-service-role";
+    } else {
+      throw new Error(
+        "Missing Supabase URL (set SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL) or SUPABASE_SERVICE_ROLE_KEY.",
+      );
+    }
   }
-  cached = createClient(url, key, { auth: { persistSession: false } });
+  cached = createClient(resolvedUrl, resolvedKey, { auth: { persistSession: false } });
   return cached;
 }
 

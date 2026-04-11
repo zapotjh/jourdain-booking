@@ -14,6 +14,7 @@ import { sendEmailC2 } from "./email-c2";
 import { sendEmailBalanceSuccess } from "./email-balance-success";
 import { sendEmailBalanceFailedAdmin } from "./email-balance-failed-admin";
 import { sendEmailCheckin } from "./email-checkin";
+import { sendEmailSecurityDepositRefundedGuest } from "./email-security-deposit-refunded-guest";
 
 function escapeHtml(s: string) {
   return s
@@ -202,7 +203,7 @@ export async function sendGuestBookingRejectedEmail(
   <p>요청하신 <strong>${params.checkIn}</strong> ~ <strong>${params.checkOut}</strong> (${params.nights}박) 예약이 현재 일정으로는 수락되지 않았습니다.</p>
   ${hostMessageBlock}
   <p>다른 날짜로 다시 문의해 주시거나, 문의 사항이 있으시면 이메일로 연락 부탁드립니다.</p>
-  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;"><strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong></p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <p style="font-size:13px;color:#666;">L'appartement Jourdain, Paris</p>
 </div>`;
@@ -354,7 +355,7 @@ export async function sendGuestDepositPaymentFailedEmail(
   <p>안녕하세요, ${n}님</p>
   <p>예약금 결제가 완료되지 않았거나 만료되었습니다. 체크인 예정일: ${ci}.</p>
   <p>새 결제 링크가 필요하시면 호스트에게 연락해 주세요.</p>
-  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;"><strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong></p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Your deposit payment was not completed or has expired. Check-in: ${co}. Please contact the host for a new payment link if needed.</p>
@@ -499,6 +500,45 @@ export async function sendAdminBalancePaymentSucceededEmail(
   return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
 }
 
+// ---- X) Security deposit refunded (guest) ----
+export async function sendGuestSecurityDepositRefundedEmail(
+  bookingId: string,
+  params: {
+    to: string;
+    guestName: string;
+    checkIn: string;
+    checkOut: string;
+    securityDepositAmountEur: string;
+  },
+): Promise<EmailResult> {
+  if (await alreadySentEmail(bookingId, "guest", "security_deposit_refunded_guest")) return { status: "deduped" };
+  const subject = "보증금 환불 완료 안내 | Security Deposit Refunded";
+  let status: "sent" | "failed" = "failed";
+  let providerMessageId: string | null = null;
+  let errorMessage: string | null = null;
+  try {
+    const data = (await sendEmailSecurityDepositRefundedGuest(params)) as ResendData;
+    status = "sent";
+    providerMessageId = data?.id ?? null;
+  } catch (err) {
+    errorMessage = (err as Error)?.message ?? null;
+  }
+  const guestMeta = guestRedirectMetadata(params.to);
+  await doLog(
+    bookingId,
+    "guest",
+    "security_deposit_refunded_guest",
+    params.to,
+    subject,
+    status,
+    providerMessageId,
+    errorMessage,
+    guestMeta,
+  );
+  if (status === "sent") logGuestSend(bookingId, "security_deposit_refunded_guest", params.to);
+  return status === "sent" ? { status: "sent" } : { status: "failed", error: errorMessage ?? undefined };
+}
+
 // ---- 10) Balance failed (guest) ----
 export async function sendGuestBalancePaymentFailedEmail(
   bookingId: string,
@@ -526,7 +566,7 @@ export async function sendGuestBalancePaymentFailedEmail(
   ${reason ? `<p>사유: ${reason}</p>` : ""}
   <p><strong>24시간 내에 자동으로 재시도되며, 3회 시도 모두 실패 시 예약이 자동으로 취소됩니다.</strong></p>
   <p>호스트가 별도로 결제 링크를 보내드리거나, 문의해 주세요.</p>
-  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;"><strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong></p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Balance payment (€${amt}) could not be processed. The host may send a manual payment link. Check-in: ${ci}.</p>
@@ -724,7 +764,7 @@ export async function sendGuestCheckoutReminder1dEmail(
   <p style="margin:18px 0 0 0;">Thank you :)<br/>We hope you had a wonderful time in Paris!</p>
 
   <p style="margin:18px 0 0 0;font-size:13px;color:#666;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
   <p style="margin:6px 0 0 0;font-size:13px;color:#666;">
     For any questions, replying directly to this email is the fastest way to reach us.
@@ -1055,7 +1095,7 @@ export async function sendGuestSecurityDepositHoldFailedEmail(
   <p>체크인 전 보증금(카드 승인 보류) 처리가 실패했습니다. 금액: €${amt}</p>
   <p><strong>사유:</strong> ${reason}</p>
   <p>카드 한도·잔액을 확인하시거나, 호스트에게 문의해 주세요. 다음 파리 기준 날에 자동으로 한 번 더 시도될 수 있습니다.</p>
-  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;"><strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong></p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
   <hr/>
   <p>Security deposit card authorization (hold) failed before check-in. Amount: €${amt}. Reason: ${reason}. Check-in ${ci} / Check-out ${co}.</p>
@@ -1191,7 +1231,7 @@ export async function sendGuestSecurityDepositHoldSucceededEmail(
   <p style="font-size:12px;color:#666;">참고 PI: ${pi}</p>
   <hr/>
   <p>Security deposit hold (€${amt}) authorized. Check-in ${ci} / ${co}.</p>
-  <p style="font-size:13px;color:#666;margin:14px 0 0 0;">문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.</p>
+  <p style="font-size:13px;color:#666;margin:14px 0 0 0;"><strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong></p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">For any questions, replying directly to this email is the fastest way to reach us.</p>
 </div>`;
   let status: "sent" | "failed" = "failed";

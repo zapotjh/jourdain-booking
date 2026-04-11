@@ -105,6 +105,28 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
 
   <h3 style="color:#2c3e50;white-space:pre-line;">
 ━━━━━━━━━━━━━━━━━━━
+💬 WhatsApp
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;margin-top:14px;">
+    WhatsApp으로도 문의하실 수 있습니다. 아래 QR 코드를 스캔하시거나 링크를 눌러 주세요.
+  </p>
+  <p style="margin:10px 0 12px 0;">
+    <a href="${escapeHtml(whatsappLink)}" style="color:#1a73e8;word-break:break-all;">${escapeHtml(whatsappLink)}</a>
+  </p>
+  <img
+    src="${escapeHtml(whatsappQrSrc)}"
+    alt="WhatsApp QR"
+    width="240"
+    height="240"
+    style="display:block;width:240px;height:240px;border-radius:10px;border:1px solid #eee;background:#fff;"
+  />
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
 🚪 체크아웃
 ━━━━━━━━━━━━━━━━━━━
   </h3>
@@ -113,17 +135,21 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
     체크아웃 시간은 오전 11시입니다.
   </p>
 
-  <p style="font-size:14px;color:#555;">
-    <strong>퇴실 시</strong><br/>
-    1️⃣ 열쇠를 다시 키박스에 넣어 주세요<br/>
-    2️⃣ 코드: 3851<br/>
-    3️⃣ 네 개의 자물쇠 숫자를 섞어 주세요
-  </p>
-
-  <p style="font-size:14px;color:#555;">
-    쓰레기는 청소팀이 처리합니다.<br/>
-    음식물 쓰레기가 있다면 건물 뒤쪽 마당의 쓰레기통에 버려 주세요.
-  </p>
+  <div style="margin:18px 0 0 0;padding:14px 14px;border:1px solid #eee;border-radius:10px;background:#fafafa;">
+    <p style="margin:0 0 10px 0;"><strong>퇴실전 필수 체크사항</strong></p>
+    <ol style="margin:0 0 10px 18px;padding:0;">
+      <li>히터 모두 끄기</li>
+      <li>조명 모두 끄기</li>
+      <li>창문을 모두 닫아주세요.<br/><span style="color:#555;">*창문을 닫지 않아 벌레가 들어오거나 도난이 발생하면 문제가 됩니다.</span></li>
+      <li>쓰레기는 건물 뒤쪽 마당의 쓰레기통에 버려 주세요.<br/><span style="color:#555;">초록색: 일반 쓰레기 / 노랑뚜껑: 재활용 쓰레기</span></li>
+    </ol>
+    <p style="margin:12px 0 8px 0;"><strong>퇴실 시</strong></p>
+    <ol style="margin:0 0 0 18px;padding:0;">
+      <li>열쇠를 다시 키박스에 넣어 주세요</li>
+      <li>코드: 3851</li>
+      <li>네 개의 자물쇠 숫자를 섞어 주세요</li>
+    </ol>
+  </div>
 
   <p style="font-size:14px;color:#555;">
     감사합니다 :)<br/>
@@ -213,17 +239,24 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
   <h3 style="color:#2c3e50;margin-top:24px;">CHECK-OUT</h3>
 
   <p style="font-size:14px;color:#555;">
-    Check-out time is 11:00 AM.
+    Check-out time is <strong>11:00 AM</strong>.
   </p>
 
-  <p style="font-size:14px;color:#555;">
-    Please return the keys to the key box (3.5 floor wall)<br/>
-    Code: 3851
-  </p>
-
-  <p style="font-size:14px;color:#555;">
-    Please shuffle the four lock numbers again.
-  </p>
+  <div style="margin:18px 0 0 0;padding:14px 14px;border:1px solid #eee;border-radius:10px;background:#fafafa;">
+    <p style="margin:0 0 10px 0;"><strong>Required checklist before leaving</strong></p>
+    <ol style="margin:0 0 10px 18px;padding:0;">
+      <li>Turn off all heaters</li>
+      <li>Turn off all lights</li>
+      <li>Please close all windows.<br/><span style="color:#555;">*If windows are left open, insects may enter or theft may occur, which can cause issues.</span></li>
+      <li>Please dispose of trash in the bins in the backyard behind the building.<br/><span style="color:#555;">Green: general waste / Yellow lid: recycling</span></li>
+    </ol>
+    <p style="margin:12px 0 8px 0;"><strong>At check-out</strong></p>
+    <ol style="margin:0 0 0 18px;padding:0;">
+      <li>Please return the key to the key box</li>
+      <li>Code: 3851</li>
+      <li>Scramble the four dials after locking</li>
+    </ol>
+  </div>
 
   <p style="font-size:14px;color:#555;">
     Thank you and we hope you enjoy your stay in Paris :)
@@ -236,7 +269,7 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
   </p>
 
   <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
     For any questions, replying directly to this email is the fastest way to reach us.

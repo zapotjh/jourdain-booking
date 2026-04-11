@@ -3,11 +3,7 @@
  * Session metadata.kind = "balance_manual" so the webhook marks balance_paid and sends balance success emails.
  */
 
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
+import { stripe } from "@/lib/stripe";
 
 const DEFAULT_SITE_URL = "https://lappartementjourdain.com";
 

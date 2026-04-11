@@ -63,7 +63,7 @@ export async function sendEmailA(p: EmailAParams) {
 
   <p>
     호스트가 예약 요청을 검토한 후 승인 여부를 안내드립니다.<br/>
-    승인되면 보증금(총 금액의 40%) 결제 링크가 이메일로 발송됩니다.
+    승인되면 예약금(총 금액의 40%) 결제 링크가 이메일로 발송됩니다.
   </p>
 
   <p>
@@ -106,7 +106,7 @@ export async function sendEmailA(p: EmailAParams) {
   </table>
 
   <p>
-    Once the host approves your request, you will receive a payment link for the 40% deposit.
+    Once the host approves your request, you will receive a payment link for the 40% booking fee.
   </p>
 
   <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
@@ -122,7 +122,7 @@ export async function sendEmailA(p: EmailAParams) {
   </p>
 
   <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
     For any questions, replying directly to this email is the fastest way to reach us.

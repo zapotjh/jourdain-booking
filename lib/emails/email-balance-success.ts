@@ -121,7 +121,7 @@ export async function sendEmailBalanceSuccess(
   <h3 style="color:#2c3e50;margin:0;">보증금 환불 안내 | Security Deposit</h3>
 
   <p style="margin:12px 0 0 0;font-size:14px;color:#555;">
-    환불 보증금 €${p.securityDepositAmountEur}은 체크아웃 후 최대 48시간 이내,<br/>
+    환불 보증금 €${p.securityDepositAmountEur}은 체크아웃 후 최대 3-5일 이내,<br/>
     숙소 상태 확인 후 문제가 없을 경우 전액 환불됩니다.
   </p>
 `
@@ -208,7 +208,7 @@ export async function sendEmailBalanceSuccess(
   <hr style="margin:22px 0;border:none;border-top:1px solid #eee;" />
   <h3 style="color:#2c3e50;margin:0;">Security Deposit</h3>
   <p style="margin:12px 0 0 0;font-size:14px;color:#555;">
-    The refundable security deposit (€${p.securityDepositAmountEur}) will be fully refunded after check-out, within up to 48 hours,
+    The refundable security deposit (€${p.securityDepositAmountEur}) will be fully refunded after check-out, within 3-5 business days,
     if no issues are found during the inspection.
   </p>
 `
@@ -228,7 +228,7 @@ export async function sendEmailBalanceSuccess(
   </p>
 
   <p style="font-size:13px;color:#666;margin:14px 0 0 0;">
-    문의사항이 있으시면 이 이메일에 그대로 답장해주시는 것이 가장 빠릅니다.
+    <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
   <p style="font-size:13px;color:#666;margin:6px 0 0 0;">
     For any questions, replying directly to this email is the fastest way to reach us.
