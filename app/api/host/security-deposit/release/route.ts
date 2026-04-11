@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { stripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 function authorize(req: Request): boolean {
   const secret = req.headers.get("x-cron-secret");

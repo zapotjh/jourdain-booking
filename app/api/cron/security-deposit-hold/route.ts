@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { stripe } from "@/lib/stripe";
 import {
   getParisDateString,
   startOfParisPlusDaysFromToday,
@@ -15,10 +15,6 @@ import {
 } from "@/lib/emails/send-with-log";
 
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 function centsToEur(cents: number): string {
   return (Number(cents) / 100).toFixed(2);

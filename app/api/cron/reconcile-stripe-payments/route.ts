@@ -4,8 +4,9 @@
  */
 
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { stripe } from "@/lib/stripe";
 import {
   sendAdminWebhookReconciliationAlert,
   sendGuestDepositPaymentSucceededEmail,
@@ -14,10 +15,6 @@ import {
 import { computeSecurityDepositHoldCentsFromStayLengthDays } from "@/lib/security-deposit-hold-cents";
 
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 const CONFIRMATION_WINDOW_MS = 60 * 60 * 1000;
 

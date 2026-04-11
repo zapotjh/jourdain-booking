@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { sendGuestSecurityDepositRefundedEmail } from "@/lib/emails/send-with-log";
 
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 function siteUrl(): string {
   const d = (process.env.NEXT_PUBLIC_SITE_URL || "https://lappartementjourdain.com").replace(/\/+$/, "");
   return d;
+}
+
+function centsToEur(cents: number): string {
+  const n = Number(cents);
+  if (!Number.isFinite(n)) return "0.00";
+  return (Math.round(n) / 100).toFixed(2);
 }
 
 function redirectToAdminPage(bookingId: string, token: string, status: "ok" | "error", message: string) {
@@ -23,6 +26,9 @@ function redirectToAdminPage(bookingId: string, token: string, status: "ok" | "e
 }
 
 export async function POST(req: Request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-02-25.clover",
+  });
   let bookingId = "";
   let token = "";
   try {
@@ -40,7 +46,7 @@ export async function POST(req: Request) {
   const { data: row, error } = await supabaseAdmin
     .from("bookings")
     .select(
-      "id,security_deposit_amount_cents,security_deposit_refund_token,security_deposit_refunded,security_deposit_refunded_at,stripe_deposit_refund_id,stripe_balance_payment_intent_id,stripe_security_deposit_payment_intent_id",
+      "id,guest_name,email,check_in,check_out,security_deposit_amount_cents,security_deposit_refund_token,security_deposit_refunded,security_deposit_refunded_at,stripe_deposit_refund_id,stripe_balance_payment_intent_id,stripe_security_deposit_payment_intent_id",
     )
     .eq("id", bookingId)
     .maybeSingle();
@@ -122,6 +128,32 @@ export async function POST(req: Request) {
 
     if (!upd) {
       return redirectToAdminPage(bookingId, token, "ok", "이미 처리된 요청입니다.");
+    }
+
+    // Send guest notification email (best-effort; does not affect refund outcome)
+    try {
+      const guestEmail = String((row as any).email ?? "").trim();
+      if (guestEmail) {
+        const guestName = String((row as any).guest_name ?? "Guest");
+        const checkIn = String((row as any).check_in ?? "");
+        const checkOut = String((row as any).check_out ?? "");
+        const securityDepositAmountEur = centsToEur(depositCents);
+        const res = await sendGuestSecurityDepositRefundedEmail(bookingId, {
+          to: guestEmail,
+          guestName,
+          checkIn,
+          checkOut,
+          securityDepositAmountEur,
+        });
+        if (res.status === "failed") {
+          console.error("[refund-deposit] guest security_deposit_refunded email failed", {
+            bookingId,
+            error: res.error,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("[refund-deposit] guest security_deposit_refunded email error", { bookingId, error: e });
     }
 
     return redirectToAdminPage(bookingId, token, "ok", "보증금 부분 환불이 생성되었습니다.");

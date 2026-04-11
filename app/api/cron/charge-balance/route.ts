@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { stripe } from "@/lib/stripe";
 import {
   sendGuestBalancePaymentSucceededEmail,
   sendAdminBalancePaymentSucceededEmail,
@@ -71,10 +71,6 @@ async function sendBalanceFailedEmails(
     console.error("[charge-balance] admin balance_payment_failed email failed", { bookingId: booking.id, error: adminFailResult.error });
   }
 }
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 export async function GET(req: Request) {
   const secret = req.headers.get("x-cron-secret");

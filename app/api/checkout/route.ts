@@ -4,23 +4,19 @@
  * Use for manual/test payments only. Canonical deposit flow uses lib/approve-booking.ts and
  * stores stripe_session_id on the booking; this route does not create or update bookings.
  */
-import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
   try {
     const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
-    if (!stripeSecret) {
+    if (!stripeSecret?.trim()) {
       return NextResponse.json(
         { error: "Missing STRIPE_SECRET_KEY" },
         { status: 500 }
       );
     }
-
-    const stripe = new Stripe(stripeSecret, {
-      apiVersion: "2026-02-25.clover",
-    });
 
     const body = await req.json();
     const { checkIn, checkOut, email, price } = body;

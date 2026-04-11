@@ -1,0 +1,18 @@
+{
+  "race": {
+    "id": "21679b6f-400c-443d-b77b-a0be9a4b1bc1",
+    "approval_token": "a8c92a105f18571e829a80cfc4af0e911afc52ef16b30e1c"
+  },
+  "reconcile": {
+    "id": "ccc971d4-57ca-47f4-bcb7-8b0d28be0730",
+    "approval_token": "5f1edfee2b18b45b5279c5d231cfac1cb5780b9a9cf213ec"
+  },
+  "balance": {
+    "id": "1e4486bb-712c-4673-a04a-b4107ca5a9f7",
+    "approval_token": "599ab0c7798673e2e8c831b68879f64040b64fd8197900d1"
+  },
+  "refund": {
+    "id": "4f7f2f9b-3d01-433c-875a-60596173f18d",
+    "approval_token": "ec6885804c28f68e9b93cfb8fa9b7bd1a6deb7366cf25b10"
+  }
+}

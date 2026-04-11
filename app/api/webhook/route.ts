@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   sendGuestDepositPaymentSucceededEmail,
@@ -15,10 +16,6 @@ import { computeSecurityDepositHoldCentsFromStayLengthDays } from "@/lib/securit
 // Uses only canonical columns: status, stripe_payment_intent_id, payment_status, confirmed_at. booking_id from session.metadata.
 // Return non-2xx ONLY for invalid signature or malformed payload. For verified events always prefer 200.
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 function logStructured(payload: Record<string, unknown>) {
   console.log("[webhook] structured", payload);
