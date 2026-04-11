@@ -1,6 +1,27 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+type ResendClient = InstanceType<typeof Resend>;
+
+let cachedResend: ResendClient | null = null;
+
+function getResend(): ResendClient {
+  if (cachedResend) return cachedResend;
+  const key = (process.env.RESEND_API_KEY || "").trim();
+  if (!key) {
+    throw new Error("Missing RESEND_API_KEY");
+  }
+  cachedResend = new Resend(key);
+  return cachedResend;
+}
+
+/** Lazy client so importing this module during `next build` does not construct Resend without API key. */
+const resend = new Proxy({} as ResendClient, {
+  get(_target, prop, receiver) {
+    const client = getResend();
+    const value = Reflect.get(client as object, prop, receiver);
+    return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(client) : value;
+  },
+}) as ResendClient;
 
 export const FROM =
   process.env.RESEND_FROM_EMAIL ??
@@ -11,6 +32,16 @@ export const REPLY_TO = "apt.jourdain.paris@gmail.com";
 
 /** Canonical admin recipient. In test mode admin emails go here. */
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "";
+
+/**
+ * Optional per-process override (e.g. set by /api/test/send-all-emails for one inbox).
+ * Do not set this in long-lived production env; prefer ADMIN_EMAIL.
+ */
+function adminDestination(): string {
+  return (
+    process.env.TEST_ADMIN_EMAIL_OVERRIDE?.trim() || ADMIN_EMAIL
+  );
+}
 
 export const EMAIL_MODE = (process.env.EMAIL_MODE ?? "production") as "production" | "test";
 
@@ -45,7 +76,7 @@ export function resolveRecipientForEnvironment(
   const intendedTo = originalTo ?? "";
 
   if (recipientType === "admin") {
-    const actualTo = ADMIN_EMAIL;
+    const actualTo = adminDestination();
     return {
       intendedTo: intendedTo || actualTo,
       actualTo,
@@ -119,13 +150,14 @@ export async function sendAdminEmail({
   subject: string;
   html: string;
 }) {
-  if (!ADMIN_EMAIL) {
+  const dest = adminDestination();
+  if (!dest) {
     console.warn("[mailer] ADMIN_EMAIL not set — admin email skipped");
     return;
   }
 
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: dest,
     subject,
     html,
     recipientType: "admin",
