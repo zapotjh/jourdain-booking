@@ -1,9 +1,5 @@
 'use client';
 
-export { default } from '../qa/page';
-
-'use client';
-
 import Link from 'next/link';
 import { AppHeaderWithBack } from '../components/layout/AppHeaderWithBack';
 import { BottomTabBar } from '../components/layout/BottomTabBar';
