@@ -5,7 +5,7 @@ import { AppHeaderWithBack } from '../../components/layout/AppHeaderWithBack';
 import { BottomTabBar } from '../../components/layout/BottomTabBar';
 
 /**
- * Terms & Conditions (English-only) — same layout/style as Korean page.
+ * Terms & Conditions (English-only) — identical layout/style as Korean page.
  * Presentational only. No API calls; no booking/payment logic.
  */
 export default function TermsEnPage() {
@@ -32,7 +32,7 @@ export default function TermsEnPage() {
               background: 'rgba(255,255,255,0.24)',
               border: '1px solid rgba(13, 8, 34, 0.14)',
               color: '#0D0822',
-              fontSize: '10.2px',
+              fontSize: 10.2,
               fontWeight: 600,
               textDecoration: 'none',
               lineHeight: 1.25,
@@ -139,139 +139,198 @@ export default function TermsEnPage() {
               fontWeight: 600,
             }}
           >
-            📄 Long-Term Stay Terms &amp; Conditions (English)
+            📄 Terms &amp; Conditions (English)
           </h2>
 
-          <h3 style={{ margin: '12px 0 4px', fontSize: 14, fontWeight: 600 }}>1. Nature of the Accommodation</h3>
+          <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>1. Nature of the Accommodation</h3>
           <p style={{ margin: '0 0 8px' }}>
-            This property is not a hotel or serviced apartment. It is a private home formerly lived in by the host and temporarily
-            shared with guests. No front desk, room service, or hotel-style services are provided. Guests agree to treat the space with
+            This property is not a hotel or professionally managed rental. It is a private home formerly lived in by the host,
+            temporarily shared with guests for a defined period. No on-site staff, front desk, room service, or hotel-style amenities
+            are provided.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            The building&apos;s structure, facilities, and surrounding environment reflect the character of an older Parisian residential
+            building and may differ from a standard hotel. Guests acknowledge that this is a private home and agree to use the space with
             care and mutual respect.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>2. Booking Conditions</h3>
-          <p style={{ margin: '0 0 4px' }}>Short-term stays: Minimum stay of 2 nights.</p>
-          <p style={{ margin: '0 0 4px' }}>Long-term stays: Minimum 28 nights, maximum 90 nights.</p>
+          <p style={{ margin: '0 0 8px' }}>Short-term stays: Minimum 2 nights.</p>
+          <p style={{ margin: '0 0 8px' }}>Long-term stays: Minimum 28 nights, maximum 90 nights.</p>
           <p style={{ margin: '0 0 8px' }}>
-            For long-term stays (28 nights or more), a rental agreement in the form of a French legally compliant furnished rental
-            contract (Bail de location meublée / Bail mobilité) will be automatically generated. By confirming the reservation, the
-            guest agrees to and electronically signs this contract. By confirming a reservation, the guest is deemed to have agreed to
-            these Terms &amp; Conditions as well as the applicable rental contract.
+            For long-term stays of 28 nights or more, a standard furnished rental agreement under French law (Bail mobilité) is prepared
+            as part of the booking process. By confirming the reservation, the guest agrees to these Terms &amp; Conditions and the
+            applicable agreement.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>3. Payment</h3>
-          <p style={{ margin: '0 0 4px' }}>At booking: 40% deposit</p>
-          <p style={{ margin: '0 0 4px' }}>30 days before check-in: Remaining 60% automatically charged</p>
+          <p style={{ margin: '0 0 8px' }}>Short-term stay:</p>
+          <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+            <li>At booking: 40% reservation fee</li>
+            <li>14 days before check-in: remaining 60% automatically charged</li>
+          </ul>
+          <p style={{ margin: '0 0 8px' }}>Long-term stay:</p>
+          <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+            <li>At booking: 40% reservation fee</li>
+            <li>30 days before check-in: remaining 60% automatically charged</li>
+          </ul>
           <p style={{ margin: '0 0 8px' }}>
-            Payments are processed through an internationally recognized payment provider. Card details are not stored.
+            *All payments are processed through an internationally recognized payment provider. Card details are not stored.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>3-1. Balance Payment Retry Policy</h3>
           <p style={{ margin: '0 0 8px' }}>
-            The remaining balance will be automatically charged to the card used at the time of booking. If the payment fails due to
-            card issues such as insufficient funds, card expiration, or authorization failure, the system will automatically retry the
-            charge up to three (3) times. Retry attempts are made approximately every 24 hours. If all three attempts fail, automatic
-            retries will stop and the guest may receive a manual secure payment link via Stripe to complete the payment. If the balance
-            remains unpaid within the specified period, the reservation may be cancelled.
+            The remaining balance is automatically charged to the card used at booking. If payment fails due to insufficient funds, card
+            expiration, or authorization failure, the system will automatically retry up to three (3) times, approximately every 24
+            hours.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            If all three attempts fail, automatic retries will stop and the guest may receive a manual secure payment link (Stripe Secure
+            Payment Link). If payment is not completed within the specified period, the reservation may be cancelled.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>
             3-2. Platform Bookings (Airbnb or Other Third-Party Platforms)
           </h3>
           <p style={{ margin: '0 0 8px' }}>
-            This property may accept reservations both through third-party booking platforms such as Airbnb and through this website.
-            Guests are free to choose their preferred booking channel, and no specific platform is required for making a reservation.
-            Reservations made through external platforms such as Airbnb remain subject to the policies, payment systems, and
-            cancellation rules of those platforms. Reservations made directly through this website are governed solely by the Terms &amp;
-            Conditions described here. The host is not responsible for differences in pricing, policies, cancellation rules, or payment
-            structures between platform bookings and direct bookings. Each reservation is processed independently according to the
-            policies and payment systems of the platform or website through which the booking was completed.
+            This property may accept reservations through third-party platforms such as Airbnb as well as directly through this website.
+            Guests are free to choose their preferred booking channel.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            Reservations made through external platforms are subject to the payment systems and policies (cancellation, refunds, etc.) of
+            those platforms. Reservations made directly through this website are governed solely by these Terms &amp; Conditions.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            The host is not responsible for differences in pricing, policies, cancellation rules, or payment structures between platform
+            and direct bookings. Each reservation is processed independently according to the platform or website through which it was
+            made.
           </p>
 
-          <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>4. Cancellation &amp; Refund</h3>
+          <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>4. Cancellation &amp; Refund Policy</h3>
+          <p style={{ margin: '0 0 8px' }}>Short-term stay:</p>
+          <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+            <li>Cancel 14+ days before check-in: full refund</li>
+            <li>Cancel 14–7 days before check-in: 50% refund of reservation fee</li>
+            <li>
+              Cancel within 7 days of check-in or no-show: non-refundable (balance payment is processed at this point)
+            </li>
+          </ul>
+          <p style={{ margin: '0 0 8px' }}>Long-term stay:</p>
+          <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+            <li>Cancel 30+ days before check-in: full refund</li>
+            <li>Cancel within 30 days of check-in: non-refundable</li>
+          </ul>
           <p style={{ margin: '0 0 8px' }}>
-            Cancel 30 days before check-in: Full refund. Cancel within 30 days: Non-refundable.
+            *For long-term stays, once dates are confirmed it becomes very difficult to resell the period, which is why this policy
+            applies.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>
             4-1. Availability &amp; Double Booking Protection
           </h3>
           <p style={{ margin: '0 0 8px' }}>
-            Although the host carefully manages availability across platforms, rare situations may occur where overlapping reservations
-            happen due to synchronization delays between booking systems. In such cases, the host reserves the right to cancel the
-            reservation and provide a full refund to the affected guest. The host will make reasonable efforts to assist the guest in
-            finding alternative accommodation if such a situation occurs.
+            The host manages availability carefully across all booking channels. However, in rare cases, a double booking may occur
+            during the approval process due to calendar synchronisation delays between platforms.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            If this happens, the host will cancel the affected reservation and provide a full refund. Where possible, the host will also
+            make reasonable efforts to help the guest find alternative accommodation.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5. Security Deposit</h3>
           <p style={{ margin: '0 0 8px' }}>
-            A fully refundable security deposit applies to protect the property and its contents. It will be charged together with the
-            remaining balance before check-in, and fully refunded after checkout if no damage, loss, or excessive cleaning is identified.
-            <br />
-            Amount: ≤14 nights €500 / &gt;14 nights €1,200
-            <br />
-            Refund timing: After checkout, our staff will inspect the apartment within 3-5 business days. If no issues are found, the
-            security deposit will be fully (100%) refunded.
+            A fully refundable security deposit is required to protect the property and its contents. It is charged together with the
+            remaining balance (60%) before check-in, and fully refunded after check-out if no damage, loss, or excessive cleaning is
+            identified.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>Amount: ≤14 nights €500 / &gt;14 nights €1,200</p>
+          <p style={{ margin: '0 0 8px' }}>
+            Refund: After check-out, staff will inspect the apartment within 3–5 business days. If no issues are found, the security
+            deposit will be fully (100%) refunded.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>5-1. Damage Charges</h3>
           <p style={{ margin: '0 0 8px' }}>
-            If damage, loss, or excessive cleaning is identified after check-out, the host may charge the actual repair or replacement
-            cost up to the security deposit amount. In cases where the damage exceeds the deposit amount, the guest may be responsible
-            for the additional cost.
+            If damage, loss, or excessive cleaning is identified after check-out, the actual repair or replacement cost may be charged up
+            to the security deposit amount. If the cost exceeds the deposit, the guest may be responsible for the additional amount.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>6. House Rules</h3>
           <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
-            <li>Quiet hours: 10 PM – 8 AM</li>
-            <li>No parties or events</li>
-            <li>No smoking</li>
+            <li>Quiet hours: 10:00 PM – 8:00 AM</li>
+            <li>No parties, events, or large gatherings</li>
+            <li>No smoking inside the property</li>
             <li>No pets</li>
-            <li>Only registered guests allowed</li>
-            <li>Treat the home as your own</li>
+            <li>No guests beyond the registered number</li>
+            <li>Please treat the property and its contents with care</li>
           </ul>
-          <p style={{ margin: '0 0 8px' }}>Violation may result in immediate termination without refund.</p>
+          <p style={{ margin: '0 0 8px' }}>
+            *Violation of these rules may result in immediate termination of the stay without refund.
+          </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>7. Maintenance &amp; Issue Handling</h3>
-          <p style={{ margin: '0 0 4px' }}>
-            Please notify the host within 2 hours of check-in with photo/video evidence for any issues.
+          <p style={{ margin: '0 0 8px' }}>
+            The host makes every effort to ensure the property is in full working order. However, as with any private residential space,
+            unexpected technical issues may arise (electricity, plumbing, heating, internet, appliances, etc.).
           </p>
 
-          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>Wi-Fi Issues</h4>
-          <p style={{ margin: '0 0 4px' }}>Troubleshooting will be attempted.</p>
+          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>7-1. Reporting Window</h4>
           <p style={{ margin: '0 0 8px' }}>
-            If unresolved, a mobile eSIM for temporary internet access may be provided. Partial refunds may apply based on duration and
-            severity.
+            Any issues must be reported within 2 hours of check-in via the support channel, with photo or video evidence.
           </p>
 
-          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>Major Issues</h4>
+          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>7-2. Response Process</h4>
+          <ol style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+            <li>Assessment of the issue</li>
+            <li>Immediate repair or resolution where possible</li>
+            <li>If resolution requires time: temporary alternative provided or partial refund considered</li>
+          </ol>
+
+          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>7-3. Wi-Fi Issues</h4>
           <p style={{ margin: '0 0 8px' }}>
-            Inability to enter, total utility outage, or serious hygiene issues may result in cancellation and refund.
+            Troubleshooting will be attempted as a priority. If unresolved, a mobile eSIM for temporary internet access may be provided.
+            Refunds for Wi-Fi outages will be calculated as partial refunds based on duration and severity.
+          </p>
+
+          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>7-4. Major Issues</h4>
+          <p style={{ margin: '0 0 8px' }}>
+            The following may constitute situations where the stay is effectively impossible: inability to enter the property, total
+            outage of electricity/water/heating, or serious hygiene issues. In such cases, cancellation and refund may be arranged.
+          </p>
+
+          <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>7-5. Late Reporting</h4>
+          <p style={{ margin: '0 0 8px' }}>
+            Issues reported more than 2 hours after check-in may be difficult to verify in terms of condition at arrival, and remedies or
+            refunds may be limited as a result.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>8. Cleaning</h3>
           <p style={{ margin: '0 0 8px' }}>
-            Professional cleaning is provided before arrival. No regular cleaning is included during the stay unless requested as an
-            additional service.
+            Professional cleaning is provided before arrival. Regular cleaning during the stay is not included as standard, but may be
+            arranged as an additional service upon request.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>9. Liability</h3>
           <p style={{ margin: '0 0 8px' }}>
-            The host is not responsible for personal injury, loss, or theft. Guests are responsible for their own belongings and safety.
+            The host is not responsible for accidents, loss, or theft caused by guest negligence. Guests are personally responsible for
+            their own safety, health, and belongings during their stay.
           </p>
 
           <h4 style={{ margin: '8px 0 4px', fontSize: 13, fontWeight: 600 }}>9-1. Force Majeure</h4>
           <p style={{ margin: '0 0 8px' }}>
-            The host shall not be held responsible for failure or delay in providing accommodation due to events beyond the host&apos;s
-            reasonable control. Such events may include, but are not limited to, natural disasters, government regulations, public utility
-            failures, transportation disruptions, epidemics, war, civil disturbances, strikes, or other force majeure events. In such
-            circumstances, the host reserves the right to cancel the reservation or propose alternative dates. The host will make
-            reasonable efforts to assist the guest in finding an appropriate solution whenever possible.
+            The host shall not be held responsible for failure or delay in providing accommodation due to events beyond reasonable
+            control, including but not limited to: natural disasters, government regulations, public utility failures, transportation
+            disruptions, epidemics, war, civil disturbances, or strikes.
+          </p>
+          <p style={{ margin: '0 0 8px' }}>
+            In such circumstances, the host reserves the right to cancel the reservation or propose alternative dates, and will make
+            reasonable efforts to assist the guest in finding an appropriate solution.
           </p>
 
           <h3 style={{ margin: '16px 0 4px', fontSize: 14, fontWeight: 600 }}>10. Governing Law &amp; Disputes</h3>
           <p style={{ margin: '0 0 8px' }}>
-            Disputes shall be resolved under the laws of the host’s country of residence.
+            Any disputes arising from these Terms &amp; Conditions shall be resolved under the laws of the host&apos;s country of residence.
+            Both parties agree to seek resolution through mutual discussion as a first step.
           </p>
         </section>
       </main>
