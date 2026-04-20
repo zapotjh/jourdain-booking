@@ -151,6 +151,18 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
     </ol>
   </div>
 
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📸 인스타그램
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+  <p style="font-size:14px;color:#555;">
+    @lapt.Jourdain 태그해서<br/>
+    파리 생활을 올려주세요!<br/>
+    소중한 기록들을 계정에서 함께 나누고 싶습니다 :)
+  </p>
+
   <p style="font-size:14px;color:#555;">
     감사합니다 :)<br/>
     파리에서 즐거운 시간 보내시길 바랍니다!
@@ -257,6 +269,18 @@ function buildEmailCheckinHtml(p: { guestName: string; checkIn: string }) {
       <li>Scramble the four dials after locking</li>
     </ol>
   </div>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📸 Instagram
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+  <p style="font-size:14px;color:#555;">
+    Tag us at <strong>@lapt.Jourdain</strong><br/>
+    and share your Paris life!<br/>
+    We'd love to feature your moments on our page :)
+  </p>
 
   <p style="font-size:14px;color:#555;">
     Thank you and we hope you enjoy your stay in Paris :)
