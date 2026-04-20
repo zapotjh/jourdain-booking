@@ -105,6 +105,17 @@ export default function BookingRequestedPage() {
               결제링크는 24시간 동안 유효하며
             </p>
             <p style={{ margin: 0, fontWeight: 500 }}>이후 예약은 자동 취소 됩니다.</p>
+            <p style={{ margin: '0.5em 0' }}> </p>
+            <p style={{ margin: 0, opacity: 0.9 }}>Please check your booking details in your email.</p>
+            <p style={{ margin: '0.25em 0' }}> </p>
+            <p style={{ margin: 0, fontWeight: 500, opacity: 0.9 }}>
+              Once your booking is confirmed,
+              <br />
+              a payment link will be sent via email.
+            </p>
+            <p style={{ margin: '0.25em 0' }}> </p>
+            <p style={{ margin: 0, fontWeight: 500, opacity: 0.9 }}>The payment link is valid for 24 hours,</p>
+            <p style={{ margin: 0, fontWeight: 500, opacity: 0.9 }}>and your booking will be canceled automatically after that.</p>
           </div>
         </div>
       </main>

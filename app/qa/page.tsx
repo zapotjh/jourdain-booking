@@ -34,7 +34,7 @@ export default function QAPage() {
         titleEnglish="Q&A"
         rightSlot={
           <Link
-            href="/QA/en"
+            href="/qa/en"
             style={{
               padding: '8.5px 11.9px',
               borderRadius: 999,

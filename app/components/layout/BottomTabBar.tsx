@@ -42,7 +42,7 @@ export function BottomTabBar({ active }: BottomTabBarProps) {
         {/* NOTE: tab-about.png is expected; if missing, this will not render. */}
         <TabLink href="/about" iconSrc="/tab-about.png" label="About" active={active === 'home'} iconWidth={42} />
         <TabLink href="/booking" iconSrc="/tab-calendar.png" label="Calendar" active={active === 'calendar'} iconWidth={38} />
-        <TabLink href="/QA" iconSrc="/tab-qa.png" label="Q&A" active={active === 'qa'} iconWidth={40} />
+        <TabLink href="/qa" iconSrc="/tab-qa.png" label="Q&A" active={active === 'qa'} iconWidth={40} />
       </div>
     </nav>
   );

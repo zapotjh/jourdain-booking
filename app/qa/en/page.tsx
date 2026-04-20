@@ -40,7 +40,7 @@ export default function QAEnPage() {
         titleKorean=""
         titleEnglish="Q&A"
         rightSlot={
-          <Link href="/QA" style={BUTTON_STYLE}>
+          <Link href="/qa" style={BUTTON_STYLE}>
             KR
           </Link>
         }
