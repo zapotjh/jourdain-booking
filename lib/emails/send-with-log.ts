@@ -737,6 +737,18 @@ export async function sendGuestCheckoutReminder1dEmail(
     </ol>
   </div>
 
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📸 인스타그램
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+  <p style="font-size:14px;color:#555;">
+    파리에서의 시간이 즐거우셨다면<br/>
+    <strong>@lapt.Jourdain</strong> 태그해서 올려주세요!<br/>
+    소중한 기록들을 계정에서 함께 나누고 싶습니다 :)
+  </p>
+
   <p style="margin:18px 0 0 0;">감사합니다 :)<br/>파리에서 즐거운 시간 보내셨길 바랍니다!</p>
 
   <hr style="margin:22px 0;border:none;border-top:1px solid #eee;"/>
@@ -760,6 +772,12 @@ export async function sendGuestCheckoutReminder1dEmail(
       <li>Scramble the four dials after locking</li>
     </ol>
   </div>
+
+  <p style="font-size:14px;color:#555;">
+    If you enjoyed your time in Paris,<br/>
+    tag us at <strong>@lapt.Jourdain</strong>!<br/>
+    We'd love to share your moments with our community :)
+  </p>
 
   <p style="margin:18px 0 0 0;">Thank you :)<br/>We hope you had a wonderful time in Paris!</p>
 

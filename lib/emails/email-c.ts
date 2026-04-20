@@ -406,6 +406,23 @@ export async function sendEmailC(p: EmailCParams) {
 
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
 
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+📸 인스타그램
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+  <p style="font-size:14px;color:#555;">
+    파리 생활을 기록하고 계신다면<br/>
+    <strong>@lapt.Jourdain</strong> 태그해서 올려주세요!<br/>
+    선택된 게시물은 계정에 소개될 수 있습니다 :)
+  </p>
+  <p style="font-size:14px;color:#555;">
+    If you're sharing your Paris life online,<br/>
+    tag us at <strong>@lapt.Jourdain</strong>!<br/>
+    We'd love to feature your moments on our page :)
+  </p>
+
   <p style="font-size:14px;color:#555;">
     <strong>문의사항이 있으시면 이 이메일에 그대로 답장을 눌러 이메일을 보내주세요.</strong>
   </p>
