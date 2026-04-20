@@ -218,7 +218,9 @@ export async function sendEmailC(p: EmailCParams) {
 
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
 
-  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+  <p style="font-size:13px;color:red;margin:0 0 18px 0;">
+    <strong>* English version of the neighbourhood guide is available at the bottom of this email.</strong>
+  </p>
 
   <h3 style="color:#2c3e50;white-space:pre-line;">
 ━━━━━━━━━━━━━━━━━━━
@@ -405,8 +407,6 @@ export async function sendEmailC(p: EmailCParams) {
   </p>
 
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
-
-  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
   <h3 style="color:#2c3e50;white-space:pre-line;">
 ━━━━━━━━━━━━━━━━━━━
 📸 인스타그램
@@ -421,6 +421,181 @@ export async function sendEmailC(p: EmailCParams) {
     If you're sharing your Paris life online,<br/>
     tag us at <strong>@lapt.Jourdain</strong>!<br/>
     We'd love to feature your moments on our page :)
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🛒 Neighbourhood Market Guide
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🥖 Bakery</strong><br/>
+    <strong>Artisan Boulanger</strong><br/>
+    304 rue des Pyrénées, 75020<br/>
+    One minute to the left as you leave the building.
+    The best croissants and baguettes in the neighbourhood.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🧀 Cheese</strong><br/>
+    <strong>Fromagerie Lefort</strong><br/>
+    118 Rue de Belleville, 75020<br/>
+    Over 100 varieties. Fresh and well-priced. Tasting offered on 1–2 cheeses.<br/>
+    *Weekday visits recommended — queues get long on weekends.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🥩 Ham &amp; Deli</strong><br/>
+    <strong>O divine Epicerie</strong><br/>
+    High-quality charcuterie and gourmet ingredients.
+    Organic vegetables and natural wine (especially good Jura producers).<br/>
+    The vegetable shop and the wine/ham shop sit side by side.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🇮🇹 Italian Produce</strong><br/>
+    <strong>Vino Sfuso</strong><br/>
+    5 Rue Jean-Baptiste Dumay, 75020<br/>
+    Fresh pasta, pickled vegetables, sauces and Italian pantry staples.
+    Wine sold by the bottle from the barrel — bring your bottle back for a discount.<br/><br/>
+    <strong>Ciao Gnari Enoteca Italiana</strong><br/>
+    333 rue des Pyrénées, 75020<br/>
+    The best Italian charcuterie in the area. Wide range of imported Italian produce and wine.<br/>
+    *Check Google Maps for opening hours — they have a break during the day.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🍷 Wine</strong><br/>
+    <strong>Dix Vins de la Joie</strong><br/>
+    Rue des Rigoles, 75020<br/>
+    Natural wine specialist and wine bar. Takeaway available. Open late.<br/>
+    The white price tag on each bottle is the takeaway price.<br/>
+    *The square terrace fills up fast on weekend afternoons.<br/><br/>
+    <strong>Apertivus Belleville</strong> — Conventional wine.<br/>
+    117 Rue de Belleville, 75019<br/><br/>
+    <strong>Nysa Cavistes</strong> — Conventional wine.<br/>
+    122 Rue de Belleville, 75020
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🌸 Florists</strong><br/>
+    <strong>Nouvelle Ere</strong><br/>
+    7 Rue du Jourdain, 75020<br/>
+    Beautiful arrangements. *Cash only.<br/>
+    ATM at Crédit Agricole across the road or HSBC opposite the building.<br/><br/>
+    <strong>Morgan Page Fleurs</strong><br/>
+    Good variety, good prices. Card accepted. The owner is wonderfully friendly.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🇯🇵 Japanese Produce</strong><br/>
+    <strong>Epicerie Umai-Jourdain</strong><br/>
+    22 Rue de la Villette, 75019<br/>
+    Japanese grocery specialist. Natural wine also stocked.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🍰 Dessert</strong><br/>
+    <strong>Patisserie de l&apos;Eglise</strong> — Classic French patisserie.<br/><br/>
+    <strong>Glaster</strong><br/>
+    66 Rue de la Villette, 75019 — Handmade ice cream.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🛒 Supermarkets</strong><br/>
+    <strong>Franprix</strong> — Directly below the building (right side). Most convenient.<br/>
+    322 rue des Pyrénées, 75020<br/><br/>
+    <strong>Naturalia</strong> — Organic. 2 Rue du Jourdain, 75020<br/><br/>
+    <strong>Bio C&apos;Bon</strong> — Organic. 341 rue des Pyrénées, 75020<br/><br/>
+    <strong>Monoprix Belleville</strong> — Full range including butcher and fish counter.<br/>
+    133 Rue de Belleville, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>💊 Pharmacy</strong><br/>
+    <strong>Pharmacie Principale de Belleville</strong> — Nearest pharmacy. Skincare and medication.
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🍷 Restaurants &amp; Bars
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Soces</strong> — French neo-bistro<br/>
+    32 Rue de la Villette, 75019 *Reservation recommended
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Cheval d&apos;or</strong> — Asian-inspired French neo-bistro<br/>
+    21 Rue de la Villette, 75019 *Reservation recommended
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Mensae</strong> — French fine dining<br/>
+    23 Rue Melingue, 75019 *Reservation recommended
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Barrio Meschica</strong> — Authentic Mexican tacos<br/>
+    15 Rue de la Villette, 75019<br/>
+    Try the Fruit Rouge margarita.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Le Baratin</strong> — Classic French bistro<br/>
+    3 Rue Jouye-Rouve, 75020<br/>
+    Chef Raquel Carena — one of the most respected figures in Paris dining. Open since 1987.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Le Grand Bol – Belleville</strong> — Chinese restaurant<br/>
+    7 Rue de la Présentation, 75011
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Aux Mandarins de Belleville</strong> — Chinese, great value<br/>
+    12 Rue Jules Romains, 75019<br/>
+    Terrace available / no reservation needed
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Supra</strong> — Georgian natural wine bar<br/>
+    12 Rue Jouye-Rouve, 75020
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>La Cale</strong> — Natural wine bar<br/>
+    113 Rue de Belleville, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Dix Vins de la Joie</strong> — Natural wine bar<br/>
+    80 Rue des Rigoles, 75020
+  </p>
+
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+☕ Cafés
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Mardi</strong><br/>
+    29 Rue de la Villette, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>Bokbar</strong> — Scandinavian-style café<br/>
+    72 Rue Julien Lacroix, 75020
   </p>
 
   <p style="font-size:14px;color:#555;">
