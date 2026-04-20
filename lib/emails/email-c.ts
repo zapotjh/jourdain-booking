@@ -218,6 +218,101 @@ export async function sendEmailC(p: EmailCParams) {
 
   <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
 
+  <hr style="margin:24px 0;border:none;border-top:1px solid #eee;" />
+
+  <h3 style="color:#2c3e50;white-space:pre-line;">
+━━━━━━━━━━━━━━━━━━━
+🛒 동네 마켓 가이드
+━━━━━━━━━━━━━━━━━━━
+  </h3>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🥖 빵집</strong><br/>
+    <strong>Artisan Boulanger</strong><br/>
+    304 rue des Pyrénées, 75020<br/>
+    집에서 나와 왼쪽으로 1분. 크루아상과 바게트가 동네에서 가장 맛있는 곳.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🧀 치즈</strong><br/>
+    <strong>Fromagerie Lefort</strong><br/>
+    118 Rue de Belleville, 75020<br/>
+    100종 이상의 셀렉션. 신선하고 가격도 좋음. 1-2가지 시식 가능.<br/>
+    *주말엔 줄이 길어 평일 방문 추천.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🥩 햄 · 델리</strong><br/>
+    <strong>O divine Epicerie</strong><br/>
+    퀄리티 높은 햄과 구르메 식재료. 유기농 채소, 내추럴 와인 (특히 쥐라 지역).<br/>
+    채소가게와 와인/햄 가게가 나란히 붙어있음.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🇮🇹 이탈리안 식재료</strong><br/>
+    <strong>Vino Sfuso</strong><br/>
+    5 Rue Jean-Baptiste Dumay, 75020<br/>
+    절임채소, 생파스타, 소스 등 이탈리안 식재료 전문.<br/>
+    드럼통에서 와인을 1병씩 소분. 병 가져가면 병값 할인.<br/><br/>
+    <strong>Ciao Gnari Enoteca Italiana</strong><br/>
+    333 rue des Pyrénées, 75020<br/>
+    이탈리안 햄은 이곳이 최고. 수입 식재료와 와인도 다양.<br/>
+    *브레이크 타임 있으니 구글맵에서 영업시간 확인 필수.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🍷 와인</strong><br/>
+    <strong>Dix Vins de la Joie</strong><br/>
+    Rue des Rigoles, 75020<br/>
+    내추럴 와인 전문점 겸 와인바. 테이크아웃 가능. 영업 마감이 늦어서 좋음.<br/>
+    선반 와인병의 흰 글씨가 테이크아웃 가격.<br/>
+    *주말 광장 테라스는 이른 오후부터 만석.<br/><br/>
+    <strong>Apertivus Belleville</strong><br/>
+    117 Rue de Belleville, 75019 — 컨벤셔널 와인.<br/><br/>
+    <strong>Nysa Cavistes</strong><br/>
+    122 Rue de Belleville, 75020 — 컨벤셔널 와인.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🌸 꽃집</strong><br/>
+    <strong>Nouvelle Ere</strong><br/>
+    7 Rue du Jourdain, 75020<br/>
+    감각적인 꽃집. *현금만 가능. 건너편 Crédit Agricole 또는 HSBC ATM 이용.<br/><br/>
+    <strong>Morgan Page Fleurs</strong><br/>
+    다양하고 가격 착함. 카드 가능. 주인 아주머니가 매우 친절하심.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🇯🇵 일본 식재료</strong><br/>
+    <strong>Epicerie Umai-Jourdain</strong><br/>
+    22 Rue de la Villette, 75019<br/>
+    일본 식재료 전문점. 내추럴 와인도 함께 취급.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🍰 디저트</strong><br/>
+    <strong>Patisserie de l&apos;Eglise</strong> — 고급 프렌치 파티세리.<br/><br/>
+    <strong>Glaster</strong><br/>
+    66 Rue de la Villette, 75019 — 수제 아이스크림 맛집.
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>🛒 슈퍼마켓</strong><br/>
+    <strong>Franprix</strong> — 건물 바로 아래 오른쪽 옆건물. 가장 편리.<br/>
+    322 rue des Pyrénées, 75020<br/><br/>
+    <strong>Naturalia</strong> — 유기농.<br/>
+    2 Rue du Jourdain, 75020<br/><br/>
+    <strong>Bio C&apos;Bon</strong> — 유기농.<br/>
+    341 rue des Pyrénées, 75020<br/><br/>
+    <strong>Monoprix Belleville</strong> — 정육·생선 포함 고급 버전.<br/>
+    133 Rue de Belleville, 75019
+  </p>
+
+  <p style="font-size:14px;color:#555;">
+    <strong>💊 약국</strong><br/>
+    <strong>Pharmacie Principale de Belleville</strong> — 가장 가까운 약국. 화장품 및 약 취급.
+  </p>
+
   <h3 style="color:#2c3e50;white-space:pre-line;">
 ━━━━━━━━━━━━━━━━━━━
 🍷 근처 레스토랑 &amp; 바 추천
