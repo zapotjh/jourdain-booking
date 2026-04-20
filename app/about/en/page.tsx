@@ -50,13 +50,14 @@ const LANGUAGE_BUTTON_STYLE: React.CSSProperties = {
   fontFamily: 'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
 };
 
-// About EN page: shrink text to ~80% (English only).
-const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(8px, 2.1vw, 9.6px)' };
+// About EN page: scale English copy up for readability.
+// Target: body max ≈ 15px. Section label matches body size.
+const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(13.5px, 3.38vw, 15px)' };
 const fluidDescriptionHeaderEn: React.CSSProperties = {
   ...fluidDescriptionHeader,
-  fontSize: 'clamp(12.8px, 3.4vw, 14.4px)',
+  fontSize: 'clamp(16.6px, 4.43vw, 18.75px)',
 };
-const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(10.4px, 2.6vw, 11.52px)' };
+const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(13.5px, 3.38vw, 15px)' };
 
 function SectionLabel({ en }: { en: string }) {
   return (
@@ -357,19 +358,16 @@ export default function AboutEnPage() {
             <h2 style={fluidDescriptionHeaderEn}>Real Paris Living</h2>
             <ParagraphBlock
               text={[
-                "For those who want to experience Paris beyond the tourist trail —",
-                "I'm carefully opening up my home while it sits empty.",
+                '"A Home for Living Paris, Not Visiting It"',
+                "I'm carefully opening up my home",
+                'while it sits empty.',
                 '',
-                "JOURDAIN — a neighbourhood I'd keep to myself.",
-                'The kind of place locals fiercely love but rarely talk about.',
+                'JOURDAIN. ',
+                'Where artists, architects and designers have quietly made their lives.',
+                'The part of Paris I loved most',
+                'across more than a decade of living here.',
                 '',
-                'A creative enclave where artists, architects and designers have quietly settled.',
-                'The neighbourhood I loved most across more than a decade living in Paris.',
-                '',
-                'For young Parisians in their 20s and 30s,',
-                "it's exactly where they'd want to live — yet nearly impossible to find a rental.",
-                '',
-                "This is where you feel 'Paris right now' most vividly.",
+                'Come and feel what Paris actually is right now."',
               ].join('\n')}
             />
           </div>
@@ -386,22 +384,21 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'Jourdain / Belleville is one of the few corners of Paris',
-                'where the creative everyday still feels genuinely alive.',
-                "Real Paris doesn't begin at the landmarks — it begins here.",
+                'Jourdain and Belleville are ',
+                'where the real texture of Parisian life is still intact. ',
+                'Not the landmarks. The everyday.',
                 '',
-                'Morning: pick up a baguette and croissant from the bakery right downstairs.',
-                'Evening: wander through the street market three minutes away —',
-                'the cheese stall, the charcuterie, the wine shop, the vegetable stand —',
-                'and come home with flowers.',
+                'The boulangerie is just a minute downstairs — ',
+                'Croissant and baguette for your morning. ',
+                'The fresh market, a 5-minute walk from home: ',
+                'cheese counter, boucherie, poissonnerie, ',
+                'a fine Italian épicerie, wine merchant, vegetable stall and flowershops.',
                 '',
-                'At night, join the locals spilling out of neighbourhood bistros and wine bars,',
-                'or bring something back, spread it across the table, and let the day end slowly.',
+                'At night, the neighbourhood bistros and wine bars fill up with locals.',
                 '',
-                "This place is for those who don't want to rush through Paris ticking off sights —",
-                'but to briefly belong to it.',
+                "This isn't a place for ticking things off a list. It's a place for briefly belonging somewhere.",
                 '',
-                '*A supermarket is located directly below the building.',
+                "*There's a supermarket directly below the building.",
               ].join('\n')}
             />
           </div>
@@ -417,13 +414,14 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'Most museums and attractions in Paris',
-                'are easily reachable within 30 minutes.',
+                "Most of Paris's museums and major landmarks",
+                'are within 30min from the apartment.',
                 '',
-                ">>After booking, I'll send you my personal list —",
-                'ten years of Paris, distilled.',
+                'After booking, ',
+                'my personal neighbourhood guide',
+                'will be sent.',
               ].join('\n')}
-              boldLines={[">>After booking, I'll send you my personal list —"]}
+              boldLines={['30min']}
             />
           </div>
         </section>
@@ -439,13 +437,13 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'A thoughtfully renovated apartment that preserves the character',
-                'of the original building while feeling quietly modern.',
+                'A renovated apartment that kept',
+                'what was worth keeping about the original building,',
+                'and quietly updated the rest.',
                 '',
-                '⭐️ Airbnb Superhost / 4.98 rating for 3 consecutive years —',
-                'designed so your stay is entirely comfortable.',
+                '⭐️ Airbnb Superhost — 4.98 across three consecutive years.',
               ].join('\n')}
-              boldLines={['⭐️ Airbnb Superhost / 4.98 rating for 3 consecutive years —']}
+              boldLines={['⭐️ Airbnb Superhost — 4.98 across three consecutive years.']}
             />
           </div>
         </section>
@@ -468,12 +466,14 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'The living room catches generous afternoon light.',
-                'At its centre hangs a 1970s Venini chandelier in hand-blown Murano glass —',
-                'dimmable, so you can set exactly the mood you want.',
+                'The living room gets natural light well into the late afternoon.',
+                'Above the sofa, a 1970s Venini chandelier',
+                'in hand-blown Murano glass —',
+                'dimmable, so the atmosphere is always yours to set.',
                 '',
-                'A cloud-shaped Ligne Roset sofa and coffee table complete the space —',
-                'somewhere to properly rest.',
+                'A Ligne Roset sofa,',
+                'a coffee table, and enough space',
+                'to stay in.',
               ].join('\n')}
             />
           </div>
@@ -497,11 +497,15 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'A microwave-oven, induction hob, washing machine and a dining island',
-                'make the kitchen genuinely practical for cooking or a quiet meal at home.',
+                'Well equipped kitchen:',
+                'A combi microwave-oven,',
+                '3 induction hob,',
+                'Washing machine,',
+                'kitchen island that doubles as a dining table.',
                 '',
-                'The entire kitchen is finished in marble by German manufacturer Schüller —',
-                'even aperitivo hour has a certain beauty here.',
+                'The whole kitchen is finished in marble',
+                'by German manufacturer Schüller —',
+                'a good place to cook, or simply to be.',
               ].join('\n')}
             />
           </div>
@@ -526,10 +530,11 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'The bedroom has a queen-size bed, a dressing area, and an en-suite shower room.',
+                'A queen-size bed, a dressing area,',
+                'and a private shower room.',
                 '',
-                'Four heaters across the living room and bedroom',
-                'mean the apartment stays warm and comfortable even in winter.',
+                '4 heaters across the bedroom and living room —',
+                'the apartment is warm, properly, even in winter.',
               ].join('\n')}
             />
           </div>
