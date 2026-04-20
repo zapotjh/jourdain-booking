@@ -60,27 +60,35 @@ export function BookingPriceGuide() {
           lineHeight: 1.5,
         }}
       >
+        {/* Korean (4 lines) */}
         <p style={{ margin: 0 }}>평일 1박 {WEEKDAY_RATE_EUR}유로</p>
+        <p style={{ margin: 0 }}>주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로</p>
+        <p style={{ margin: 0 }}>7일 이상 숙박시: {discount7Percent}% 할인 적용</p>
+        <p style={{ margin: 0 }}>28일 이상 장기숙박시: {discount28Percent}% 할인 적용</p>
+
+        <p style={{ margin: 0 }}>&nbsp;</p>
+
+        {/* English (4 lines) */}
         <p style={{ margin: 0 }}>
           <span style={enTextStyleTight}>Sun-Thu €{WEEKDAY_RATE_EUR} per night</span>
         </p>
-        <p style={{ margin: 0 }}>주말(금/토 숙박) 1박 {WEEKEND_RATE_EUR}유로</p>
         <p style={{ margin: 0 }}>
           <span style={enTextStyleTight}>Fri/Sat €{WEEKEND_RATE_EUR} per night</span>
         </p>
-        <p style={{ margin: 0 }}>&nbsp;</p>
         <p style={{ margin: 0 }}>
-          7일 이상 숙박시: {discount7Percent}% 할인 적용{' '}
-          <span style={enTextStyle}>/ 7+ nights: {discount7Percent}% discount</span>
+          <span style={enTextStyleTight}>7+ nights: {discount7Percent}% discount</span>
         </p>
         <p style={{ margin: 0 }}>
-          28일 이상 장기숙박시: {discount28Percent}% 할인 적용{' '}
-          <span style={enTextStyle}>/ 28+ nights: {discount28Percent}% discount</span>
+          <span style={enTextStyleTight}>28+ nights: {discount28Percent}% discount</span>
         </p>
+
         <p style={{ margin: 0 }}>&nbsp;</p>
+
+        {/* Footnote (Korean 1 line, English 1 line) */}
         <p style={{ margin: 0, fontSize: 'clamp(10px, 2.6vw, 12px)' }}>
           *본 숙소는 장기체류를 우선시 하여 운영되고 있습니다.
-          <br />
+        </p>
+        <p style={{ margin: 0, fontSize: 'clamp(10px, 2.6vw, 12px)' }}>
           *This property is operated with a priority on longer stays.
         </p>
       </div>

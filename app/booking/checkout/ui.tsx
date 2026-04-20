@@ -209,7 +209,7 @@ export function CheckoutClient() {
               예약기간 <span style={{ fontSize: 14, opacity: 0.85 }}>/ Dates</span>
             </div>
             <div style={{ fontSize: 16, fontWeight: 600 }}>
-              {formatDisplayDateSlash(checkInStr!)} - {formatDisplayDateSlash(checkOutStr!)} ({nights}박/{nights}nights)
+              {formatDisplayDate(checkInStr!)}  -  {formatDisplayDate(checkOutStr!)} ({nights}박/ {nights}nights)
             </div>
           </section>
 
@@ -539,14 +539,8 @@ function LabeledInput({ label, value, onChange, placeholder, type = 'text', erro
 function formatDisplayDate(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map((part) => Number(part));
   if (!y || !m || !d) return dateStr;
-  return `${y}.${m < 10 ? `0${m}` : m}.${d < 10 ? `0${d}` : d}`;
-}
-
-function formatDisplayDateSlash(dateStr: string): string {
-  const [y, m, d] = dateStr.split('-').map((part) => Number(part));
-  if (!y || !m || !d) return dateStr;
   const mm = m < 10 ? `0${m}` : m;
   const dd = d < 10 ? `0${d}` : d;
-  return `${y} / ${mm} / ${dd}`;
+  return `${y}. ${mm}. ${dd}`;
 }
 

@@ -18,13 +18,13 @@ export function BookingSummary({
   const hasRange = Boolean(checkIn && checkOut && nights > 0);
   const enLabelStyle = { fontSize: 'clamp(15px, 3.6vw, 16px)', opacity: 0.85 } as const;
 
-  const formatSlash = (d: Date) => {
+  const formatDot = (d: Date) => {
     const y = d.getUTCFullYear();
     const m = d.getUTCMonth() + 1;
     const day = d.getUTCDate();
     const mm = m < 10 ? `0${m}` : `${m}`;
     const dd = day < 10 ? `0${day}` : `${day}`;
-    return `${y} / ${mm} / ${dd}`;
+    return `${y}. ${mm}. ${dd}`;
   };
 
   return (
@@ -71,7 +71,7 @@ export function BookingSummary({
           {hasRange ? (
             <>
               <p style={{ margin: 0 }}>
-                {formatSlash(checkIn!)} - {formatSlash(checkOut!)} ({nights}박/{nights}nights)
+                {formatDot(checkIn!)}  -  {formatDot(checkOut!)} ({nights}박/ {nights}nights)
               </p>
             </>
           ) : (
