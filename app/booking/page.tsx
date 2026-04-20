@@ -51,37 +51,56 @@ export default function BookingPage() {
       }
 
       // Use Supabase PostgREST directly (no backend changes).
-      // We only need inventory-blocking dates: confirmed bookings + in-progress bookings.
-      const url = new URL(`${supabaseUrl}/rest/v1/bookings`);
-      url.searchParams.set('select', 'check_in,check_out,status');
-      url.searchParams.set('status', 'in.(confirmed,payment_pending,pending_approval)');
+      // We only need inventory-blocking dates:
+      // - bookings: confirmed + in-progress (payment_pending/pending_approval)
+      // - blocked_dates: manual/airbnb blocks (render as blockedConfirmed)
+      const bookingsUrl = new URL(`${supabaseUrl}/rest/v1/bookings`);
+      bookingsUrl.searchParams.set('select', 'check_in,check_out,status');
+      bookingsUrl.searchParams.set('status', 'in.(confirmed,payment_pending,pending_approval)');
       // Only future (or ongoing) bookings need to block.
-      url.searchParams.set('check_out', `gte.${formatDateForApi(today)}`);
-      url.searchParams.set('order', 'check_in.asc');
+      bookingsUrl.searchParams.set('check_out', `gte.${formatDateForApi(today)}`);
+      bookingsUrl.searchParams.set('order', 'check_in.asc');
 
-      const res = await fetch(url.toString(), {
-        headers: {
-          apikey: supabaseAnonKey,
-          Authorization: `Bearer ${supabaseAnonKey}`,
-        },
-        cache: 'no-store',
-      });
+      const blockedDatesUrl = new URL(`${supabaseUrl}/rest/v1/blocked_dates`);
+      blockedDatesUrl.searchParams.set('select', 'date,source');
+      blockedDatesUrl.searchParams.set('source', 'in.(airbnb,manual)');
+      blockedDatesUrl.searchParams.set('date', `gte.${formatDateForApi(today)}`);
+      blockedDatesUrl.searchParams.set('order', 'date.asc');
 
-      if (!res.ok) {
-        console.error('[booking] failed to load blocked dates', { status: res.status });
+      const headers = {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+      };
+
+      const [bookingsRes, blockedRes] = await Promise.all([
+        fetch(bookingsUrl.toString(), { headers, cache: 'no-store' }),
+        fetch(blockedDatesUrl.toString(), { headers, cache: 'no-store' }),
+      ]);
+
+      if (!bookingsRes.ok) {
+        console.error('[booking] failed to load bookings for calendar blocks', { status: bookingsRes.status });
         return;
       }
+      if (!blockedRes.ok) {
+        console.error('[booking] failed to load blocked_dates for calendar blocks', { status: blockedRes.status });
+        // Keep bookings-based blocking even if blocked_dates fails.
+      }
 
-      const rows = (await res.json()) as Array<{
+      const bookingRows = (await bookingsRes.json()) as Array<{
         check_in: string;
         check_out: string;
         status: 'confirmed' | 'payment_pending' | 'pending_approval' | string;
       }>;
 
+      const blockedDateRows = (blockedRes.ok ? await blockedRes.json() : []) as Array<{
+        date: string;
+        source: 'airbnb' | 'manual' | string;
+      }>;
+
       const nextConfirmed: DateRange[] = [];
       const nextPending: DateRange[] = [];
 
-      for (const r of rows) {
+      for (const r of bookingRows) {
         const start = parseDateFromApi(r.check_in);
         const endInclusive = parseDateFromApi(r.check_out);
         if (!start || !endInclusive) continue;
@@ -90,6 +109,14 @@ export default function BookingPage() {
         const range = createRange(start, endInclusive);
         if (r.status === 'confirmed') nextConfirmed.push(range);
         else if (r.status === 'payment_pending' || r.status === 'pending_approval') nextPending.push(range);
+      }
+
+      // blocked_dates rows are single-day blocks. Both airbnb/manual are treated as confirmed blocks.
+      for (const r of blockedDateRows) {
+        if (r.source !== 'airbnb' && r.source !== 'manual') continue;
+        const d = parseDateFromApi(r.date);
+        if (!d) continue;
+        nextConfirmed.push(createRange(d, d));
       }
 
       if (cancelled) return;
