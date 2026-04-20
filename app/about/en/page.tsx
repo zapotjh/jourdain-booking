@@ -51,13 +51,16 @@ const LANGUAGE_BUTTON_STYLE: React.CSSProperties = {
 };
 
 // About EN page: scale English copy up for readability.
-// Target: body max ≈ 15px. Section label matches body size.
-const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(13.5px, 3.38vw, 15px)' };
+// Target: bump all EN text sizes by +1px for readability.
+// Yellow section labels (+1.5px).
+// Section label matches body size.
+// Additional tweak: yellow labels +0.5.
+const fluidSectionLabelEn: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(16.5px, 4.08vw, 18px)' };
 const fluidDescriptionHeaderEn: React.CSSProperties = {
   ...fluidDescriptionHeader,
-  fontSize: 'clamp(16.6px, 4.43vw, 18.75px)',
+  fontSize: 'clamp(18.6px, 4.97vw, 20.75px)',
 };
-const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(13.5px, 3.38vw, 15px)' };
+const fluidBodyTextEn: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(15.5px, 3.85vw, 17px)' };
 
 function SectionLabel({ en }: { en: string }) {
   return (
@@ -292,15 +295,15 @@ function Gallery({ images, altPrefix }: { images: string[]; altPrefix: string })
           left: 8,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: 28,
-          height: 28,
+          width: 42,
+          height: 42,
           border: 'none',
           background: 'transparent',
           padding: 0,
           cursor: 'pointer',
         }}
       >
-        <Image src="/scrollchchevron_left_fix.png" alt="" width={28} height={28} />
+        <Image src="/scrollchchevron_left_fix.png" alt="" width={42} height={42} />
       </button>
       <button
         type="button"
@@ -311,15 +314,15 @@ function Gallery({ images, altPrefix }: { images: string[]; altPrefix: string })
           right: 8,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: 28,
-          height: 28,
+          width: 42,
+          height: 42,
           border: 'none',
           background: 'transparent',
           padding: 0,
           cursor: 'pointer',
         }}
       >
-        <Image src="/scrollchchevron_right_fix.png" alt="" width={28} height={28} />
+        <Image src="/scrollchchevron_right_fix.png" alt="" width={42} height={42} />
       </button>
     </div>
   );
@@ -355,19 +358,23 @@ export default function AboutEnPage() {
           <div style={{ height: 18 }} />
           <div style={TEXT_COLUMN_STYLE}>
             <SectionLabel en="ABOUT" />
-            <h2 style={fluidDescriptionHeaderEn}>Real Paris Living</h2>
+            <h2 style={fluidDescriptionHeaderEn}>
+              A home for living Paris
+              <br />
+              Not visiting it
+            </h2>
             <ParagraphBlock
               text={[
-                '"A Home for Living Paris, Not Visiting It"',
                 "I'm carefully opening up my home",
                 'while it sits empty.',
                 '',
                 'JOURDAIN. ',
-                'Where artists, architects and designers have quietly made their lives.',
+                'Where artists, architects and designers ',
+                'have quietly made their lives.',
                 'The part of Paris I loved most',
                 'across more than a decade of living here.',
                 '',
-                'Come and feel what Paris actually is right now."',
+                'Come and feel what Paris actually is right now.',
               ].join('\n')}
             />
           </div>
@@ -378,27 +385,34 @@ export default function AboutEnPage() {
           <AboutPhoto src="/About-Location-photo.png" alt="LOCATION PHOTO" />
           <div style={{ height: 14 }} />
           <div style={TEXT_COLUMN_STYLE}>
-            <SectionLabel en="LOCATION" />
+            <SectionLabel en="NEIGHBOURHOOD" />
           </div>
           <AboutIconStrip src="/About-LOCATION-ICON.png" alt="LOCATION ICONS" />
           <div style={TEXT_COLUMN_STYLE}>
+            <h2 style={fluidDescriptionHeaderEn}>
+              1 min · Fresh Croissant &amp; Baguette
+              <br />
+              5 min · The Market
+            </h2>
             <ParagraphBlock
               text={[
                 'Jourdain and Belleville are ',
                 'where the real texture of Parisian life is still intact. ',
-                'Not the landmarks. The everyday.',
+                'Not the landmarks, the everyday.',
                 '',
-                'The boulangerie is just a minute downstairs — ',
+                'Boulangerie is just a minute downstairs — ',
                 'Croissant and baguette for your morning. ',
-                'The fresh market, a 5-minute walk from home: ',
-                'cheese counter, boucherie, poissonnerie, ',
-                'a fine Italian épicerie, wine merchant, vegetable stall and flowershops.',
+                'And 5minutes walk to take you to ',
+                'Cheese counter, Charcuterie, Fish market ',
+                'Fine Italian épicerie, Winery and Flowershops.',
                 '',
-                'At night, the neighbourhood bistros and wine bars fill up with locals.',
+                'At night, bistros and wine bars in a neighbourhood',
+                'are filled up with locals.',
                 '',
-                "This isn't a place for ticking things off a list. It's a place for briefly belonging somewhere.",
+                "This isn't a place for ticking things off a list. ",
+                "It's a place for briefly belonging somewhere.",
                 '',
-                "*There's a supermarket directly below the building.",
+                '*Supermarket is directly below the building.',
               ].join('\n')}
             />
           </div>
@@ -409,20 +423,21 @@ export default function AboutEnPage() {
           <AboutPhoto src="/About-MAP-photo.png" alt="MAP PHOTO" />
           <div style={{ height: 14 }} />
           <div style={TEXT_COLUMN_STYLE}>
-            <MapTitleLabel title="From the apartment to key museums and landmarks" />
+            <MapTitleLabel title="Location" />
           </div>
           <div style={TEXT_COLUMN_STYLE}>
-            <ParagraphBlock
-              text={[
-                "Most of Paris's museums and major landmarks",
-                'are within 30min from the apartment.',
-                '',
-                'After booking, ',
-                'my personal neighbourhood guide',
-                'will be sent.',
-              ].join('\n')}
-              boldLines={['30min']}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(10px, 2.5vw, 14px)' }}>
+              <p style={{ ...fluidBodyTextEn, fontWeight: 500 }}>
+                Most museums &amp; major landmarks
+                <br />
+                are within <strong>30min</strong> from the apartment.
+              </p>
+              <p style={{ ...fluidBodyTextEn, fontWeight: 500 }}>
+                After booking,
+                <br />
+                you'll get my neighbourhood guide.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -435,15 +450,17 @@ export default function AboutEnPage() {
           </div>
           <AboutIconStrip src="/About-SPACE-ICON.png" alt="SPACE ICONS" />
           <div style={TEXT_COLUMN_STYLE}>
+            <h2 style={fluidDescriptionHeaderEn}>1-BEDROOM · FULLY RENOVATED</h2>
             <ParagraphBlock
               text={[
-                'A renovated apartment that kept',
-                'what was worth keeping about the original building,',
-                'and quietly updated the rest.',
+                'Original character, Modern comfort.',
                 '',
                 '⭐️ Airbnb Superhost — 4.98 across three consecutive years.',
               ].join('\n')}
-              boldLines={['⭐️ Airbnb Superhost — 4.98 across three consecutive years.']}
+              boldLines={[
+                'Original character, Modern comfort.',
+                '⭐️ Airbnb Superhost — 4.98 across three consecutive years.',
+              ]}
             />
           </div>
         </section>
@@ -466,14 +483,15 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'The living room gets natural light well into the late afternoon.',
-                'Above the sofa, a 1970s Venini chandelier',
-                'in hand-blown Murano glass —',
-                'dimmable, so the atmosphere is always yours to set.',
+                'Our living room gets natural light',
+                'till the late afternoon.',
+                '1970s Venini chandelier on the ceiling.',
+                'Hand-blown Murano crystal glass.',
+                'Dimmable, so the atmosphere is ',
+                'always yours to set.',
                 '',
-                'A Ligne Roset sofa,',
-                'a coffee table, and enough space',
-                'to stay in.',
+                'Ligne Roset sofa, Ploum.',
+                'A coffee table, and enough space to stay in.',
               ].join('\n')}
             />
           </div>
@@ -495,11 +513,11 @@ export default function AboutEnPage() {
           </div>
           <AboutIconStrip src="/About-KITCHEN-ICON.png" alt="KITCHEN ICONS" />
           <div style={TEXT_COLUMN_STYLE}>
+            <h2 style={fluidDescriptionHeaderEn}>Fully equipped kitchen</h2>
             <ParagraphBlock
               text={[
-                'Well equipped kitchen:',
-                'A combi microwave-oven,',
-                '3 induction hob,',
+                'Combi microwave-oven,',
+                '3 induction hobs,',
                 'Washing machine,',
                 'kitchen island that doubles as a dining table.',
                 '',
@@ -530,8 +548,9 @@ export default function AboutEnPage() {
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
               text={[
-                'A queen-size bed, a dressing area,',
-                'and a private shower room.',
+                'A queen-size bed, ',
+                'a dressing area,',
+                'a private shower room.',
                 '',
                 '4 heaters across the bedroom and living room —',
                 'the apartment is warm, properly, even in winter.',

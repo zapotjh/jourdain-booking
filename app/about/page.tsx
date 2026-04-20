@@ -16,6 +16,13 @@ import {
   fluidBodyText,
 } from '@/lib/content-layout';
 
+// Font size tuning (KR page):
+// - all text +1
+// - yellow section labels +2 (+2 additional per latest requests)
+const fluidSectionLabelKr: React.CSSProperties = { ...fluidSectionLabel, fontSize: 'clamp(14px, 3.5vw, 16px)' };
+const fluidDescriptionHeaderKr: React.CSSProperties = { ...fluidDescriptionHeader, fontSize: 'clamp(17px, 4.6vw, 19px)' };
+const fluidBodyTextKr: React.CSSProperties = { ...fluidBodyText, fontSize: 'clamp(14px, 3.7vw, 16px)' };
+
 const PAGE_STYLE: React.CSSProperties = {
   minHeight: '100vh',
   backgroundColor: '#CAB1A4',
@@ -52,7 +59,7 @@ const LANGUAGE_TOGGLE_STYLE: React.CSSProperties = {
 
 function SectionLabel({ en, kr }: { en: string; kr: string }) {
   return (
-    <p style={fluidSectionLabel}>
+    <p style={fluidSectionLabelKr}>
       <span
         style={{
           width: 'clamp(5px, 1.2vw, 6px)',
@@ -73,7 +80,7 @@ function MapTitleLabel({ title }: { title: string }) {
   return (
     <p
       style={{
-        ...fluidSectionLabel,
+        ...fluidSectionLabelKr,
         fontWeight: 600,
         letterSpacing: 0,
         marginBottom: 'clamp(8px, 2vw, 12px)',
@@ -103,7 +110,7 @@ function ParagraphBlock({ text, boldLines }: { text: string; boldLines?: string[
           <p
             key={idx}
             style={{
-              ...fluidBodyText,
+              ...fluidBodyTextKr,
               fontWeight: isBold ? 700 : 500,
             }}
           >
@@ -288,15 +295,15 @@ function Gallery({ images, altPrefix }: { images: string[]; altPrefix: string })
           left: 8,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: 28,
-          height: 28,
+          width: 42,
+          height: 42,
           border: 'none',
           background: 'transparent',
           padding: 0,
           cursor: 'pointer',
         }}
       >
-        <Image src="/scrollchchevron_left_fix.png" alt="" width={28} height={28} />
+        <Image src="/scrollchchevron_left_fix.png" alt="" width={42} height={42} />
       </button>
       <button
         type="button"
@@ -307,15 +314,15 @@ function Gallery({ images, altPrefix }: { images: string[]; altPrefix: string })
           right: 8,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: 28,
-          height: 28,
+          width: 42,
+          height: 42,
           border: 'none',
           background: 'transparent',
           padding: 0,
           cursor: 'pointer',
         }}
       >
-        <Image src="/scrollchchevron_right_fix.png" alt="" width={28} height={28} />
+        <Image src="/scrollchchevron_right_fix.png" alt="" width={42} height={42} />
       </button>
     </div>
   );
@@ -355,7 +362,7 @@ export default function AboutPage() {
           <div style={{ height: 18 }} />
           <div style={TEXT_COLUMN_STYLE}>
             <SectionLabel en="ABOUT" kr="이 공간은?" />
-            <h2 style={fluidDescriptionHeader}>진짜파리살기</h2>
+            <h2 style={fluidDescriptionHeaderKr}>진짜파리살기</h2>
             <ParagraphBlock
               text={[
                 '관광용 숙소에서는 느낄 수 없는 파리를',
@@ -387,10 +394,11 @@ export default function AboutPage() {
           <AboutPhoto src="/About-Location-photo.png" alt="LOCATION PHOTO" />
           <div style={{ height: 14 }} />
           <div style={TEXT_COLUMN_STYLE}>
-            <SectionLabel en="LOCATION" kr="위치" />
+            <SectionLabel en="NEIGHBOURHOOD" kr="동네 소개" />
           </div>
           <AboutIconStrip src="/About-LOCATION-ICON.png" alt="LOCATION ICONS" />
           <div style={TEXT_COLUMN_STYLE}>
+            <h2 style={fluidDescriptionHeaderKr}>바게트는 집 앞에, 시장은 5분 걷기.</h2>
             <ParagraphBlock
               text={[
                 '주르당/벨빌은 파리에서도 유난히',
@@ -421,7 +429,7 @@ export default function AboutPage() {
           <AboutPhoto src="/About-MAP-photo.png" alt="MAP PHOTO" />
           <div style={{ height: 14 }} />
           <div style={TEXT_COLUMN_STYLE}>
-            <MapTitleLabel title="집 에서 주요 박물관, 명소 가는 길" />
+            <MapTitleLabel title="LOCATION  /  위치 보기" />
           </div>
           <div style={TEXT_COLUMN_STYLE}>
             <ParagraphBlock
@@ -445,13 +453,14 @@ export default function AboutPage() {
           </div>
           <AboutIconStrip src="/About-SPACE-ICON.png" alt="SPACE ICONS" />
           <div style={TEXT_COLUMN_STYLE}>
+            <h2 style={fluidDescriptionHeaderKr}>전체 리노베이션을 마친 1 베드룸.</h2>
             <ParagraphBlock
               text={[
                 '고풍스러운 건물의 분위기를 유지하면서',
-                '모던하게 리노베이션을 마친 아파트입니다.',
+                '현대 생활방식에 불편함 없이 지낼 수 있도록',
+                '리노베이션을 마친 아파트입니다.',
                 '',
                 '⭐️ 에어비앤비 슈퍼호스트 / 3년 연속 평점 4.98',
-                '으로 불편함 없이 지낼 수 있도록 꾸며져 있습니다',
               ].join('\n')}
               boldLines={['⭐️ 에어비앤비 슈퍼호스트 / 3년 연속 평점 4.98']}
             />
