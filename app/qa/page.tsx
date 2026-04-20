@@ -222,7 +222,7 @@ export default function QAPage() {
             </p>
           </section>
 
-          {/* English section removed (see /faq/en). */}
+          {/* English section removed (see /qa/en). */}
         </div>
       </main>
 
