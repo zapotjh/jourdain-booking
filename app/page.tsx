@@ -103,7 +103,43 @@ export default function Page() {
           />
         </Link>
 
-        <div style={{ position: 'fixed', left: '50%', bottom: 65, transform: 'translateX(-50%)' }}>
+        <div
+          style={{
+            position: 'fixed',
+            left: '50%',
+            bottom: 65,
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px',
+            zIndex: 2,
+          }}
+        >
+          <a
+            href="https://www.instagram.com/lapt.jourdain"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="인스타그램 @lapt.jourdain 열기"
+            style={{
+              fontSize: '14px',
+              letterSpacing: '0.04em',
+              color: 'rgba(13, 8, 34, 0.8)',
+              textDecoration: 'none',
+              fontFamily:
+                'var(--font-afacad), Afacad, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+              padding: '4px 12px',
+              borderRadius: '999px',
+              border: '1px solid rgba(13, 8, 34, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.14)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            @lapt.jourdain
+          </a>
           <Link href="/booking" aria-label="예약달력 열기" style={{ display: 'block' }}>
             <Image
               src="/Home-Calender-button.png"
